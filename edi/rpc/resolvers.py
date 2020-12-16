@@ -42,8 +42,58 @@ class OdooResolver:
             else:
                 result = self.models.execute_kw(
                     self.db, 2, 'admin', 'product.product', 'search_read',
-                    [[]], {'fields': ['name', 'standard_price',
-                                      'product_variant_id']}
+                    [[]], {'fields': ['name', 'standard_price']}
+                )
+            result = json.dumps(result)
+            print('Get COGS xmlrpc time: ', time.perf_counter() - start)
+            return result
+        except Exception as e:
+            print(e)
+            return str(e)
+
+    def get_stock(self):
+        try:
+            start = time.perf_counter()
+            if self.data:
+                data = self.data
+                print(data)
+                result = self.models.execute_kw(
+                    self.db, 2, 'admin', 'product.product', 'search_read',
+                    [[['id', '=', data]]],
+                    {'fields': ['name', 'qty_available',
+                                'incoming_qty', 'outgoing_qty',
+                                'virtual_available']}
+                )
+            else:
+                result = self.models.execute_kw(
+                    self.db, 2, 'admin', 'product.product', 'search_read',
+                    [[]], {'fields': ['name', 'qty_available', 'incoming_qty',
+                                      'outgoing_qty', 'virtual_available']}
+                )
+            result = json.dumps(result)
+            print('Get Stock xmlrpc time: ', time.perf_counter() - start)
+            return result
+        except Exception as e:
+            print(e)
+            return str(e)
+
+    def list_cogs(self):
+        try:
+            start = time.perf_counter()
+            if self.data:
+                data = self.data
+                print(data)
+                result = self.models.execute_kw(
+                    self.db, 2, 'admin', 'product.product', 'search_read',
+                    [[['id', 'in', data]]],
+                    {'fields': ['name', 'qty_available', 'incoming_qty',
+                                'outgoing_qty', 'virtual_available']}
+                )
+            else:
+                result = self.models.execute_kw(
+                    self.db, 2, 'admin', 'product.product', 'search_read',
+                    [[]], {'fields': ['name', 'qty_available', 'incoming_qty',
+                                      'outgoing_qty', 'virtual_available']}
                 )
             result = json.dumps(result)
             print('Get COGS xmlrpc time: ', time.perf_counter() - start)
