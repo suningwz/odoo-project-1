@@ -7,8 +7,8 @@ import xmlrpc.client
 class OdooResolver:
     def __init__(self, data=None):
         try:
-            url = 'https://smsperkasa-init-setup-1719520.dev.odoo.com/'
-            self.db = 'smsperkasa-init-setup-1719520'
+            url = 'https://smsperkasa-init-setup-1852822.dev.odoo.com/'
+            self.db = 'smsperkasa-init-setup-1852822'
             self.username = 'admin'
             self.password = '30ac227dc37f5b061a57cc984499ccd732e5d6a5'
 
