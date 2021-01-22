@@ -71,7 +71,7 @@ class OdooResolver:
                                       'outgoing_qty', 'virtual_available']}
                 )
             # result = json.dumps(result)
-            result = 'xaxaxaxa'
+            result = json.dumps([{'xaxa': 'xaxa'}])
             print('Get Stock xmlrpc time: ', time.perf_counter() - start)
             return result
         except Exception as e:
