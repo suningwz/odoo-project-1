@@ -55,7 +55,7 @@ class OdooResolver:
         try:
             start = time.perf_counter()
             if self.data:
-                data = self.data
+                data = int(self.data)
                 print(data)
                 result = self.models.execute_kw(
                     self.db, 2, 'admin', 'product.product', 'search_read',
@@ -71,7 +71,7 @@ class OdooResolver:
                                       'outgoing_qty', 'virtual_available']}
                 )
             # result = json.dumps(result)
-            result = json.dumps([{'xaxa': 'xaxa'}])
+            result = json.dumps([{'xaxa': result}])
             print('Get Stock xmlrpc time: ', time.perf_counter() - start)
             return result
         except Exception as e:
