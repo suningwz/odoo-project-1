@@ -19,11 +19,11 @@ class OdooGetCogsRpc(threading.Thread):
     def on_request(self, ch, method, props, body):
 
         # print('Someone Request ...')
-        if body:
+        try:
             data = json.loads(body)
             odoo_resolver = OdooResolver(data)
             response = odoo_resolver.get_cogs()
-        else:
+        except Exception:
             odoo_resolver = OdooResolver()
             response = odoo_resolver.get_cogs()
 
@@ -60,11 +60,11 @@ class OdooGetStockRpc(threading.Thread):
     def on_request(self, ch, method, props, body):
 
         # print('Someone Request ...')
-        if body:
+        try:
             data = json.loads(body)
             odoo_resolver = OdooResolver(data)
             response = odoo_resolver.get_stock()
-        else:
+        except Exception:
             odoo_resolver = OdooResolver()
             response = odoo_resolver.get_stock()
 
@@ -101,11 +101,11 @@ class OdooListStockRpc(threading.Thread):
     def on_request(self, ch, method, props, body):
 
         # print('Someone Request ...')
-        if body:
+        try:
             data = json.loads(body)
             odoo_resolver = OdooResolver(data)
             response = odoo_resolver.get_stock()
-        else:
+        except Exception:
             odoo_resolver = OdooResolver()
             response = odoo_resolver.get_stock()
 
