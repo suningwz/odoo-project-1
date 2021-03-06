@@ -6,7 +6,7 @@ import threading
 from .resolvers import OdooResolver
 
 # RABBIT_MQ = 'localhost'
-RABBIT_MQ = '128.199.193.129'
+RABBIT_MQ = '165.232.175.107'
 
 
 class OdooGetCogsRpc(threading.Thread):
