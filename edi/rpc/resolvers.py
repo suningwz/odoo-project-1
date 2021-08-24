@@ -7,8 +7,8 @@ import xmlrpc.client
 class OdooResolver:
     def __init__(self, data=None):
         try:
-            url = 'https://smsperkasa-init-setup-1852822.dev.odoo.com/'
-            self.db = 'smsperkasa-init-setup-1852822'
+            url = 'https://smsperkasa.odoo.com/'
+            self.db = 'smsperkasa-master-1574977'
             self.username = 'admin'
             self.password = '30ac227dc37f5b061a57cc984499ccd732e5d6a5'
 
@@ -55,7 +55,7 @@ class OdooResolver:
         try:
             start = time.perf_counter()
             if self.data:
-                data = self.data
+                data = int(self.data)
                 print(data)
                 result = self.models.execute_kw(
                     self.db, 2, 'admin', 'product.product', 'search_read',

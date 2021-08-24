@@ -6,7 +6,7 @@ import threading
 from .resolvers import OdooResolver
 
 # RABBIT_MQ = 'localhost'
-RABBIT_MQ = '128.199.193.129'
+RABBIT_MQ = '165.232.175.107'
 
 
 class OdooGetCogsRpc(threading.Thread):
@@ -19,11 +19,11 @@ class OdooGetCogsRpc(threading.Thread):
     def on_request(self, ch, method, props, body):
 
         # print('Someone Request ...')
-        if body:
+        try:
             data = json.loads(body)
             odoo_resolver = OdooResolver(data)
             response = odoo_resolver.get_cogs()
-        else:
+        except Exception:
             odoo_resolver = OdooResolver()
             response = odoo_resolver.get_cogs()
 
@@ -60,11 +60,11 @@ class OdooGetStockRpc(threading.Thread):
     def on_request(self, ch, method, props, body):
 
         # print('Someone Request ...')
-        if body:
+        try:
             data = json.loads(body)
             odoo_resolver = OdooResolver(data)
             response = odoo_resolver.get_stock()
-        else:
+        except Exception:
             odoo_resolver = OdooResolver()
             response = odoo_resolver.get_stock()
 
@@ -101,11 +101,11 @@ class OdooListStockRpc(threading.Thread):
     def on_request(self, ch, method, props, body):
 
         # print('Someone Request ...')
-        if body:
+        try:
             data = json.loads(body)
             odoo_resolver = OdooResolver(data)
             response = odoo_resolver.get_stock()
-        else:
+        except Exception:
             odoo_resolver = OdooResolver()
             response = odoo_resolver.get_stock()
 
