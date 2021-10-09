@@ -28,13 +28,15 @@ class ContactSMSP(models.Model):
         compute='_compute_customer_date')
 
     utm_source = fields.Char(
-        'UTM Source', index=True, readonly=False, store=True)
+        'UTM Source', index=True, readonly=True, store=True)
     utm_medium = fields.Char(
-        'UTM Medium', index=True, readonly=False, store=True)
+        'UTM Medium', index=True, readonly=True, store=True)
     utm_campaign = fields.Char(
-        'UTM Campaign', index=True, readonly=False, store=True)
+        'UTM Campaign', index=True, readonly=True, store=True)
+    utm_term = fields.Char(
+        'UTM Term', index=True, readonly=True, store=True)
     chatwoot_id = fields.Char(
-        'Chatwoot ID', index=True, readonly=False, store=True)
+        'Chatwoot ID', index=True, readonly=True, store=True)
     # teddy = fields.Char(
     #     'TEDDY', index=True, readonly=False, store=True)
 
