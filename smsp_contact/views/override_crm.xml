@@ -1,22 +1,37 @@
 <odoo>
   <data>
-    <record model="ir.ui.view" id="ini_id">
-      <field name="name">ini.nama</field>
-      <field name="model">res.partner</field>
-      <field name="inherit_id" ref="base.view_partner_form" />
-      <field name="arch" type="xml">
-        <xpath expr="//field[@name='website']" position="after">
-          <field name="lifecycle_stage" string="Lifecycle Stage"/>
-          <field name="become_visitor_date" string="Become Visitor Date"/>
-          <field name="become_lead_date" string="Become Lead Date"/>
-          <field name="become_prospect_date" string="Become Prospect Date"/>
-          <field name="become_customer_date" string="Become Customer Date"/>
-          <field name="utm_source" string="UTM Source"/>
-          <field name="utm_medium" string="UTM Medium"/>
-          <field name="utm_campaign" string="UTM Campaign"/>
-        </xpath>
-      </field>
+    <record id="res_partner_smsp_view_search" model="ir.ui.view">
+        <field name="name">res.partner.smsp.search.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+               <filter string="Leads" name="lead" domain="[('lifecycle_stage','=', 'lead')]"/>
+               <separator/>
+            </xpath>
+        </field>
     </record>
+    <!-- Your Action Window Definition -->
+    <record id="action_leads" model="ir.actions.act_window">
+        <field name="name">Leads</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{"search_default_lead":1}</field>
+    </record>
+    <!-- Action Menu Item Related To Above Action Window -->
+    <menuitem
+    action="action_leads"
+    id="contact_leads"
+    parent="crm.crm_menu_root"
+    name="Leads"
+    sequence="50"/>
+
+    <!-- Action Menu Item Related To Above Action Window -->
+    <!-- <menuitem
+    action="action_leads"
+    id="contact_leads"
+    name="Leadssss"
+    groups="base.group_user"/> -->
 
     <!-- explicit list view definition -->
 <!--

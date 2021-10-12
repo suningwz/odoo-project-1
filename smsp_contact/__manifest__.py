@@ -30,6 +30,7 @@
         # 'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'views/override_crm.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
