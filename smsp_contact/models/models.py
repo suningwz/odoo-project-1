@@ -33,6 +33,8 @@ class ContactSMSP(models.Model):
         'UTM Medium', index=True, readonly=False, store=True)
     utm_campaign = fields.Char(
         'UTM Campaign', index=True, readonly=False, store=True)
+    utm_term = fields.Char(
+        'UTM Term', index=True, readonly=False, store=True)
     chatwoot_id = fields.Char(
         'Chatwoot ID', index=True, readonly=False, store=True)
     # teddy = fields.Char(
