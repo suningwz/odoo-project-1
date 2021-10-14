@@ -8,6 +8,7 @@ import datetime
 class ContactSMSP(models.Model):
     _inherit = 'res.partner'
 
+    company_group = fields.Many2one(comodel_name='res.partner', string='Company Group')
     lifecycle_stage = fields.Selection([
         ('visitor', 'Visitor'),
         ('lead', 'Lead'),
@@ -39,6 +40,10 @@ class ContactSMSP(models.Model):
         'Chatwoot ID', index=True, readonly=False, store=True)
     # teddy = fields.Char(
     #     'TEDDY', index=True, readonly=False, store=True)
+
+    _sql_constraints = [
+        ('email_phone_uniq', 'unique (email,phone)', 'The email and phone must be unique for each customer !'),
+    ]
 
     @api.depends('lifecycle_stage')
     def _compute_visitor_date(self):

@@ -1,20 +1,29 @@
 <odoo>
   <data>
-    <record model="ir.ui.view" id="ini_id">
-      <field name="name">ini.nama</field>
+    <record model="ir.ui.view" id="analyze_data">
+      <field name="name">analyze.data</field>
       <field name="model">res.partner</field>
       <field name="inherit_id" ref="base.view_partner_form" />
       <field name="arch" type="xml">
-        <xpath expr="//field[@name='website']" position="after">
-          <field name="lifecycle_stage" string="Lifecycle Stage"/>
-          <field name="become_visitor_date" string="Become Visitor Date"/>
-          <field name="become_lead_date" string="Become Lead Date"/>
-          <field name="become_prospect_date" string="Become Prospect Date"/>
-          <field name="become_customer_date" string="Become Customer Date"/>
-          <field name="utm_source" string="UTM Source"/>
-          <field name="utm_medium" string="UTM Medium"/>
-          <field name="utm_campaign" string="UTM Campaign"/>
-          <field name="utm_term" string="UTM Term"/>
+        <xpath expr="//page[@name='internal_notes']" position='before'>
+        <!-- <xpath expr="//field[@name='website']" position="after"> -->
+          <page name="analyzing" string="Analyzing">
+            <group name="data" string="Data">
+              <field name="lifecycle_stage" string="Lifecycle Stage"/>
+              <field name="become_visitor_date" string="Become Visitor Date"/>
+              <field name="become_lead_date" string="Become Lead Date"/>
+              <field name="become_prospect_date" string="Become Prospect Date"/>
+              <field name="become_customer_date" string="Become Customer Date"/>
+              <field name="utm_source" string="UTM Source"/>
+              <field name="utm_medium" string="UTM Medium"/>
+              <field name="utm_campaign" string="UTM Campaign"/>
+              <field name="utm_term" string="UTM Term"/>
+            </group>
+          </page>
+        </xpath>
+
+        <xpath expr="//field[@name='vat']" position="before">
+          <field name="company_group" string="Company Group"/>
         </xpath>
       </field>
     </record>
