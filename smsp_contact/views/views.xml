@@ -1,0 +1,88 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="analyze_data">
+      <field name="name">analyze.data</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//page[@name='internal_notes']" position='before'>
+        <!-- <xpath expr="//field[@name='website']" position="after"> -->
+          <page name="analyzing" string="Analyzing">
+            <group name="data" string="Data">
+              <field name="lifecycle_stage" string="Lifecycle Stage"/>
+              <field name="become_visitor_date" string="Become Visitor Date"/>
+              <field name="become_lead_date" string="Become Lead Date"/>
+              <field name="become_prospect_date" string="Become Prospect Date"/>
+              <field name="become_customer_date" string="Become Customer Date"/>
+              <field name="utm_source" string="UTM Source"/>
+              <field name="utm_medium" string="UTM Medium"/>
+              <field name="utm_campaign" string="UTM Campaign"/>
+              <field name="utm_term" string="UTM Term"/>
+            </group>
+          </page>
+        </xpath>
+
+        <xpath expr="//field[@name='vat']" position="before">
+          <field name="company_group" string="Company Group"/>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="addons/smsp_hubspot.list">
+      <field name="name">addons/smsp_hubspot list</field>
+      <field name="model">addons/smsp_hubspot.addons/smsp_hubspot</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+<!--
+    <record model="ir.actions.act_window" id="addons/smsp_hubspot.action_window">
+      <field name="name">addons/smsp_hubspot window</field>
+      <field name="res_model">addons/smsp_hubspot.addons/smsp_hubspot</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+-->
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="addons/smsp_hubspot.action_server">
+      <field name="name">addons/smsp_hubspot server</field>
+      <field name="model_id" ref="model_addons/smsp_hubspot_addons/smsp_hubspot"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+<!--
+    <menuitem name="addons/smsp_hubspot" id="addons/smsp_hubspot.menu_root"/>
+-->
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="addons/smsp_hubspot.menu_1" parent="addons/smsp_hubspot.menu_root"/>
+    <menuitem name="Menu 2" id="addons/smsp_hubspot.menu_2" parent="addons/smsp_hubspot.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="addons/smsp_hubspot.menu_1_list" parent="addons/smsp_hubspot.menu_1"
+              action="addons/smsp_hubspot.action_window"/>
+    <menuitem name="Server to list" id="addons/smsp_hubspot" parent="addons/smsp_hubspot.menu_2"
+              action="addons/smsp_hubspot.action_server"/>
+-->
+  </data>
+</odoo>

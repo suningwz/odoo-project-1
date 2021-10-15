@@ -1,0 +1,14 @@
+<odoo>
+  <data>
+    <record id="contact_inherit" model="ir.ui.view">
+      <field name="name">contact.inherit</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='function']/." position="before">
+          <field name="lifecycle_stage"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
