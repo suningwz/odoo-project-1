@@ -28,10 +28,28 @@ class ContactSMSP(models.Model):
         'Become Customer Date', index=True, readonly=True, store=True,
         compute='_compute_customer_date')
 
-    utm_source = fields.Char(
-        'UTM Source', index=True, readonly=False, store=True)
-    utm_medium = fields.Char(
-        'UTM Medium', index=True, readonly=False, store=True)
+    utm_source = fields.Selection([
+        ('google', 'Google'),
+        ('facebook', 'Facebook'),
+        ('instagram', 'Instagram'),
+        ('twitter', 'Twitter'),
+        ('pinterest', 'Pinterest'),
+        ('linkedin', 'LinkedIn'),
+        ('newsletter', 'Newsletter'),
+        ('outbound', 'outbound'),
+        ('referral', 'Referral'),
+        ('direct', 'Direct')],
+        string='UTM Source', index=True, readonly=False, store=True)
+    utm_medium = fields.Selection([
+        ('cpc', 'CPC'),
+        ('display', 'Display'),
+        ('search', 'Search'),
+        ('email', 'E-mail'),
+        ('social', 'Social'),
+        ('blog', 'Blog'),
+        ('canvasing', 'Canvasing'),
+        ('phone', 'Phone')],
+        string='UTM Medium', index=True, readonly=False, store=True)
     utm_campaign = fields.Char(
         'UTM Campaign', index=True, readonly=False, store=True)
     utm_term = fields.Char(
