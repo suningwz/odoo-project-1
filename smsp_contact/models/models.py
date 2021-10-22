@@ -5,8 +5,27 @@ from odoo import models, fields, api
 import datetime
 
 
+class IndustrySMSP(models.Model):
+    _name = 'industry.smsp'
+    _description = 'Contact Industry'
+    name = fields.Char(
+        'Name', index=True, readonly=False, store=True)
+
+
 class ContactSMSP(models.Model):
     _inherit = 'res.partner'
+
+    business_entity = fields.Selection([
+        ('Perorangan', 'Perorangan'),
+        ('Toko', 'Toko'),
+        ('CV.', 'CV.'),
+        ('PT.', 'PT.'),
+        ('UD.', 'UD.'),
+        ('FA.', 'FA.')], string='Business Entity',
+        default='Perorangan', store=True)
+    industry_smsp = fields.Many2many(comodel_name='industry.smsp', string='Industry')
+    accurate_id = fields.Char(
+        'Accurate ID', index=True, readonly=False, store=True)
 
     company_group = fields.Many2one(comodel_name='res.partner', string='Company Group')
     lifecycle_stage = fields.Selection([
@@ -35,8 +54,9 @@ class ContactSMSP(models.Model):
         ('twitter', 'Twitter'),
         ('pinterest', 'Pinterest'),
         ('linkedin', 'LinkedIn'),
+        ('tokopedia', 'Tokopedia'),
         ('newsletter', 'Newsletter'),
-        ('outbound', 'outbound'),
+        ('outbound', 'Outbound'),
         ('referral', 'Referral'),
         ('direct', 'Direct')],
         string='UTM Source', index=True, readonly=False, store=True)

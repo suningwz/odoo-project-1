@@ -22,8 +22,17 @@
           </page>
         </xpath>
 
+        <xpath expr="//field[@name='type']" position="before">
+          <field name="business_entity" string="Business Entity"/>
+        </xpath>
+
         <xpath expr="//field[@name='vat']" position="before">
+          <field name="industry_smsp" string="Industry" groups="base.group_user"/>
           <field name="company_group" string="Company Group"/>
+        </xpath>
+
+        <xpath expr="//field[@name='vat']" position="after">
+          <field name="accurate_id" string="Accurate ID"/>
         </xpath>
       </field>
     </record>
