@@ -31,6 +31,7 @@
         'views/views.xml',
         'views/templates.xml',
         'views/override_crm.xml',
+        'views/override_crm_lead.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

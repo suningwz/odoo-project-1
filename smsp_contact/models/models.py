@@ -12,6 +12,13 @@ class IndustrySMSP(models.Model):
         'Name', index=True, readonly=False, store=True)
 
 
+class GroupContactSMSP(models.Model):
+    _name = 'group.contact.smsp'
+    _description = 'Group Contact'
+    name = fields.Char(
+        'Name', index=True, readonly=False, store=True)
+
+
 class ContactSMSP(models.Model):
     _inherit = 'res.partner'
 
@@ -76,6 +83,7 @@ class ContactSMSP(models.Model):
         'UTM Term', index=True, readonly=False, store=True)
     chatwoot_id = fields.Char(
         'Chatwoot ID', index=True, readonly=False, store=True)
+    group = fields.Many2one('group.contact.smsp', string='Group', ondelete='set null', index=True, copy=False)
     # teddy = fields.Char(
     #     'TEDDY', index=True, readonly=False, store=True)
 
@@ -122,6 +130,8 @@ class ContactSMSP(models.Model):
 
 class LeadSMSP(models.Model):
     _inherit = 'crm.lead'
+
+    expected_tonnage = fields.Float(string='Expected Tonnage', default=0.0)
 
     @api.model
     def create(self, vals_list):

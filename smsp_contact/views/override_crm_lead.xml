@@ -1,47 +1,12 @@
 <odoo>
   <data>
-    <record model="ir.ui.view" id="analyze_data">
-      <field name="name">analyze.data</field>
-      <field name="model">res.partner</field>
-      <field name="inherit_id" ref="base.view_partner_form" />
+    <record model="ir.ui.view" id="override_crm">
+      <field name="name">override.crm</field>
+      <field name="model">crm.lead</field>
+      <field name="inherit_id" ref="crm.crm_lead_view_form" />
       <field name="arch" type="xml">
-        <xpath expr="//page[@name='internal_notes']" position='before'>
-        <!-- <xpath expr="//field[@name='website']" position="after"> -->
-          <page name="analyzing" string="Analyzing">
-            <group name="data" string="Data">
-              <field name="lifecycle_stage" string="Lifecycle Stage"/>
-              <field name="become_visitor_date" string="Become Visitor Date"/>
-              <field name="become_lead_date" string="Become Lead Date"/>
-              <field name="become_prospect_date" string="Become Prospect Date"/>
-              <field name="become_customer_date" string="Become Customer Date"/>
-              <field name="utm_source" string="UTM Source"/>
-              <field name="utm_medium" string="UTM Medium"/>
-              <field name="utm_campaign" string="UTM Campaign"/>
-              <field name="utm_term" string="UTM Term"/>
-            </group>
-          </page>
-        </xpath>
-
-        <xpath expr="//field[@name='type']" position="before">
-          <field name="business_entity" string="Business Entity"/>
-        </xpath>
-
-        <xpath expr="//field[@name='vat']" position="before">
-          <field name="industry_smsp" string="Industry" groups="base.group_user"/>
-          <field name="company_group" string="Company Group"/>
-        </xpath>
-
-        <xpath expr="//field[@name='vat']" position="after">
-          <field name="accurate_id" string="Accurate ID"/>
-        </xpath>
-
-        <xpath expr="//field[@name='category_id']" position="before">
-          <field name="group" string="Group"/>
-        </xpath>
-
-        <xpath expr="//field[@name='is_company']" position="after">
-          <field name="customer_rank" invisible="1"/>
-          <field name="supplier_rank" invisible="1"/>
+        <xpath expr="//field[@name='date_deadline']" position="after">
+          <field name="expected_tonnage" string="Expected Tonnage"/>
         </xpath>
       </field>
     </record>
