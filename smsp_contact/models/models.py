@@ -42,16 +42,16 @@ class ContactSMSP(models.Model):
         ('customer', 'Customer')], string='lifecycle Stage',
         default='lead', store=True)
     become_visitor_date = fields.Datetime(
-        'Become Visitor Date', index=True, readonly=True, store=True,
+        'Become Visitor Date', index=True, store=True,
         compute='_compute_visitor_date')
     become_lead_date = fields.Datetime(
-        'Become Lead Date', index=True, readonly=True, store=True,
+        'Become Lead Date', index=True, store=True,
         compute='_compute_lead_date')
     become_prospect_date = fields.Datetime(
-        'Become Prospect Date', index=True, readonly=True, store=True,
+        'Become Prospect Date', index=True, store=True,
         compute='_compute_prospect_date')
     become_customer_date = fields.Datetime(
-        'Become Customer Date', index=True, readonly=True, store=True,
+        'Become Customer Date', index=True, store=True,
         compute='_compute_customer_date')
 
     utm_source = fields.Selection([

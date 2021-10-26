@@ -14,10 +14,10 @@
               <field name="become_lead_date" string="Become Lead Date"/>
               <field name="become_prospect_date" string="Become Prospect Date"/>
               <field name="become_customer_date" string="Become Customer Date"/>
-              <field name="utm_source" string="UTM Source"/>
-              <field name="utm_medium" string="UTM Medium"/>
-              <field name="utm_campaign" string="UTM Campaign"/>
-              <field name="utm_term" string="UTM Term"/>
+              <field name="utm_source" string="UTM Source" readonly="1"/>
+              <field name="utm_medium" string="UTM Medium" readonly="1"/>
+              <field name="utm_campaign" string="UTM Campaign" readonly="1"/>
+              <field name="utm_term" string="UTM Term" readonly="1"/>
             </group>
           </page>
         </xpath>
