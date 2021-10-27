@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 import datetime
 
@@ -90,6 +91,18 @@ class ContactSMSP(models.Model):
     _sql_constraints = [
         ('email_phone_uniq', 'unique (email,phone)', 'The email and phone must be unique for each customer !'),
     ]
+
+    @api.model
+    def create(self, vals_list):
+        dup = self.env['res.partner'].search(
+            [('phone', '=', vals_list['phone']),
+             ('email', '=', vals_list['email']),
+             ('is_company', '=', False)])
+        if len(dup) > 0 and not vals_list['is_company']:
+            raise UserError("Email and phone must be unique!")
+        else:
+            partner = super().create(vals_list)
+            return partner
 
     @api.depends('lifecycle_stage')
     def _compute_visitor_date(self):
