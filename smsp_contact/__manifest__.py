@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "SMSP Contact",
+    'name': "SMSP Setup",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -8,9 +8,24 @@
 
     'description': """
         This is used to:
-        - add Lifecycle Stage in contact
-        - become certain Lifecycle date
+        - Add Lifecycle Stage in contact
+        - Become certain Lifecycle date
         - Automatic update Lifecycle Stage and also become Lifecycle date
+        - Add UTM Source, UTM Medium, UTM Campaign, UTM Term, and Chatwoot ID (readonly)
+        - Add Leads (Contact) menu in CRM with its default filter
+        - Add company group field
+        - Add constrain unique together between email and phone
+        - Move analyze data (UTM, LC, and become LC date) to a separate tab
+        - Add Business Entity
+        - Add Industry
+        - Add Accurate ID
+        - Add customer_rank and supplier_rank in Contact Form View
+        - Add expected tonnage in CRM Form View
+        - Add Group as m2o relationship in Contact Form View
+        - Add validation email and phone
+        - Add validation in create and update for duplicating email and phone
+        - Make button validate invisible when there is a stock minus, over credit limit, and overdue invoice.
+        - Add boolean variable in PO to check if all products in that PO is fully delivered or not
     """,
 
     'author': "My Company",
@@ -23,7 +38,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'contacts', 'crm', 'sale'],
+    'depends': ['base', 'contacts', 'crm', 'sale', 'stock', 'purchase'],
 
     # always loaded
     'data': [
@@ -32,6 +47,8 @@
         'views/templates.xml',
         'views/override_crm.xml',
         'views/override_crm_lead.xml',
+        'views/override_stock_picking.xml',
+        'views/override_purchase_order.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

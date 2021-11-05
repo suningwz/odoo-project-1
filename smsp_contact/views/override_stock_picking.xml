@@ -1,0 +1,64 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="override_stock_picking">
+      <field name="name">override.picking</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.view_picking_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='move_line_ids_without_package']" position="inside">
+          <form string="Move Lines" create="0" edit="0">
+            <header>
+              <field name="state" widget="statusbar"/>
+            </header>
+            <sheet name="studio_sheet_5ea9a4">
+              <field name="company_id" invisible="1"/>
+              <field name="picking_id" invisible="1"/>
+              <field name="product_uom_category_id" invisible="1"/>
+              <group name="studio_group_a1d227">
+                <group name="studio_group_3b693a">
+                  <field name="date"/>
+                  <field name="reference" string="Reference"/>
+                  <field name="origin"/>
+                  <field name="product_id"/>
+                  <field name="location_id" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
+                  <field name="location_dest_id" options="{'no_create': True}" groups="stock.group_stock_multi_locations"/>
+                </group>
+                <group name="studio_group_5206b2">
+                  <label for="product_uom_qty" string="Quantity Reserved" attrs="{'invisible': [('state', '=', 'done')]}"/>
+                  <div class="o_row" attrs="{'invisible': [('state', '=', 'done')]}" name="studio_div_dcb8f6">
+                    <field name="product_uom_qty"/>
+                    <field name="product_uom_id" options="{'no_create': True}" string="Unit of Measure" groups="uom.group_uom"/>
+                  </div>
+                  <label for="qty_done" string="Quantity Done"/>
+                  <div class="o_row" name="studio_div_5c7788">
+                    <field name="qty_done"/>
+                    <field name="product_uom_id" options="{'no_create': True}" string="Unit of Measure" groups="uom.group_uom"/>
+                  </div>
+                  <field name="lot_id" groups="stock.group_production_lot" context="{'default_product_id': product_id, 'active_picking_id': picking_id}" attrs="{'invisible': [('lot_id', '=', False),('lot_name', '!=', False)]}"/>
+                  <field name="over_quantity" string="Over Quantity?"/>
+                  <field name="lot_name" groups="stock.group_production_lot" attrs="{'invisible': ['|',('lot_id', '!=', False),('lot_name', '=', False)]}"/>
+                  <field name="package_id" string="Source Package" groups="product.group_stock_packaging"/>
+                  <field name="result_package_id" string="Destination Package" groups="stock.group_tracking_lot"/>
+                  <field name="owner_id" string="Owner" groups="stock.group_tracking_owner"/>
+                </group>
+              </group>
+            </sheet>
+          </form>
+        </xpath>
+        <xpath expr="//field[@name='group_id']" position="after">
+          <field name="over_quantity" string="Over Quantity?"/>
+          <field name="over_credit" string="Over Credit?"/>
+          <field name="has_overdue" string="Has Overdue?"/>
+        </xpath>
+
+        <xpath expr="//button[@name='button_validate'][@class='oe_highlight']" position="attributes">
+          <attribute name="attrs">{'invisible': ['|', '|', '|', '|', ('over_credit', '!=', False), ('has_overdue', '!=', False), ('over_quantity', '!=', False), ('state', 'in', ('waiting','confirmed')), ('show_validate', '=', False)]}</attribute>
+        </xpath>
+
+        <xpath expr="//button[@name='button_validate'][@class='o_btn_validate']" position="attributes">
+          <attribute name="attrs">{'invisible': ['|', '|', '|', '|', ('over_credit', '!=', False), ('has_overdue', '!=', False), ('over_quantity', '!=', False), ('state', 'not in', ('waiting', 'confirmed')), ('show_validate', '=', False)]}</attribute>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
