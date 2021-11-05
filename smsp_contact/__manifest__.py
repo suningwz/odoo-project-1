@@ -25,7 +25,7 @@
         - Add validation email and phone
         - Add validation in create and update for duplicating email and phone
         - Make button validate invisible when there is a stock minus, over credit limit, and overdue invoice.
-        - Add boolean variable in PO to check if all products in that PO is fully delivered or not
+        - Add boolean variable in PO to check if all products in that PO is fully received or not
     """,
 
     'author': "My Company",
