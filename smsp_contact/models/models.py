@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 import datetime
+import phonenumbers
+import re
 
 
 class IndustrySMSP(models.Model):
@@ -94,15 +96,91 @@ class ContactSMSP(models.Model):
 
     @api.model
     def create(self, vals_list):
+        """Phone Validation."""
+        phone = ''
+        if vals_list['phone']:
+            phone = vals_list['phone']
+            try:
+                if not self.check_phonenumber(phone):
+                    raise ValidationError('Not a valid Phone')
+            except Exception as e:
+                raise ValidationError(str(e))
+
+        """Email Validation."""
+        email = ''
+        if vals_list['email']:
+            email = vals_list['email']
+            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
+            if match == None:
+                raise ValidationError('Not a valid E-mail')
+
+        """Duplicate Email and Phone Validation."""
         dup = self.env['res.partner'].search(
             [('phone', '=', vals_list['phone']),
              ('email', '=', vals_list['email']),
              ('is_company', '=', False)])
         if len(dup) > 0 and not vals_list['is_company']:
-            raise UserError("Email and phone must be unique!")
+            raise ValidationError("Email and phone must be unique!")
         else:
             partner = super().create(vals_list)
             return partner
+
+    def write(self, vals):
+        """Phone Validation."""
+        phone = vals.get('phone')
+        if phone:
+            try:
+                if not self.check_phonenumber(phone):
+                    raise ValidationError('Not a valid Phone')
+            except Exception as e:
+                raise ValidationError(str(e))
+
+        """Email Validation."""
+        email = vals.get('email')
+        if email:
+            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
+            if match == None:
+                raise ValidationError('Not a valid E-mail')
+
+        """Duplicate Email and Phone Validation."""
+        is_email_phone_change = True
+        if phone == None:
+            phone = False
+        if email == None:
+            email = False
+        if not (vals.get('phone') or vals.get('email')):
+            is_email_phone_change = False
+        is_company = vals.get('is_company')
+        if not is_company:
+            is_company = self.is_company
+        dup = self.env['res.partner'].search(
+            [('phone', '=', phone),
+             ('email', '=', email),
+             ('is_company', '=', False)])
+        if len(dup) > 0 and not is_company and is_email_phone_change:
+            raise ValidationError("Email and phone must be unique!")
+        else:
+            partner = super().write(vals)
+            return partner
+
+    def convert_phonenumber(self, phonenumber):
+        if phonenumber[0] == '0':
+            phonenumber = '+62' + phonenumber[1:]
+        x = phonenumbers.parse(phonenumber, 'ID')
+        return phonenumbers.format_number(
+            x,
+            phonenumbers.PhoneNumberFormat.INTERNATIONAL
+        )
+
+    def check_phonenumber(self, phonenumber):
+        pn = self.convert_phonenumber(phonenumber)
+        x = phonenumbers.parse(pn, 'ID')
+        is_possible = phonenumbers.is_possible_number(x)
+        is_valid = phonenumbers.is_valid_number(x)
+        if is_possible and is_valid:
+            return True
+        else:
+            return False
 
     @api.depends('lifecycle_stage')
     def _compute_visitor_date(self):
@@ -222,3 +300,92 @@ class SaleOrderSMSP(models.Model):
 
         res = super().action_cancel()
         return res
+
+
+class StockMoveLineSMSP(models.Model):
+    _inherit = 'stock.move.line'
+
+    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to move out while the quantity in source location is not enough.')
+
+    def _compute_over_quantity(self):
+        for record in self:
+            all_quants = record.product_id.stock_quant_ids
+            record.over_quantity = False
+            found = False
+            for q in all_quants:
+                if q.location_id == record.location_id:
+                    found = True
+                    record.over_quantity = record.qty_done > q.quantity
+            if found == False:
+                record.over_quantity = record.qty_done > 0
+
+
+class StockPickingSMSP(models.Model):
+    _inherit = 'stock.picking'
+
+    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates there is at least 1 moving out product which more than the stock in source location.')
+    over_credit = fields.Boolean(string='Over Credit?', compute='_compute_over_credit', help='It indicates this contact has more credit limit that it should be.')
+    has_overdue = fields.Boolean(string='Has Overdue?', compute='_compute_has_overdue', help='It indicates this contact has 1 or more overdue invoices.')
+
+    def _compute_over_quantity(self):
+        for record in self:
+            all_quants = record.move_line_ids_without_package
+            record.over_quantity = False
+            for q in all_quants:
+                if q.over_quantity:
+                    record.over_quantity = q.over_quantity
+                    break
+
+            if record.picking_type_id.name == 'Receipts':
+                record.over_quantity = False
+
+    def _compute_over_credit(self):
+        for record in self:
+            limit = 0
+            used_credit = 0
+
+            if record.partner_id.parent_id:
+                company = record.partner_id.parent_id
+                limit = company.credit_limit
+                used_credit = company.credit
+                if company.company_group:
+                    limit = company.company_group.credit_limit
+                    companies = self.env['res.partner'].search([('company_group', '=', company.company_group.id)])
+                    used_credit = 0
+                    for c in companies:
+                        used_credit = used_credit + c.credit
+            else:
+                limit = record.partner_id.credit_limit
+                used_credit = record.partner_id.credit
+
+            for ol in record.sale_id.order_line:
+                if ol.product_uom_qty != 0:
+                    used_credit += (ol.price_subtotal/ol.product_uom_qty)*(ol.product_uom_qty-ol.qty_invoiced)+0.1*(ol.price_subtotal/ol.product_uom_qty)*(ol.product_uom_qty-ol.qty_invoiced)
+            for inv in record.sale_id.invoice_ids:
+                if inv.state == 'draft':
+                    used_credit += inv.amount_total
+            record.over_credit = used_credit > limit
+
+    def _compute_has_overdue(self):
+        for record in self:
+            # record.has_overdue = record.partner_id.total_overdue > 0
+            record.has_overdue = 1 == 0
+
+
+class PurchaseOrderSMSP(models.Model):
+    _inherit = 'purchase.order'
+
+    is_complete_received = fields.Boolean(string='Complete Received?', compute='_compute_is_complete_received', help='It indicates all of the products in PO has been fully delivered or not.', readonly=True, store=False)
+
+    def _compute_is_complete_received(self):
+        for record in self:
+            all_lines = record.order_line
+            received = True
+            for l in all_lines:
+                if l.product_qty != l.qty_received:
+                    received = False
+                    record.is_complete_received = False
+                    break
+
+            if received:
+                record.is_complete_received = True
