@@ -1,0 +1,62 @@
+<odoo>
+  <data>
+    
+    <!-- <record id="funnel_dashboard_view" model="ir.ui.view">
+        <field name="name">funnel.dashboard.tree</field>
+        <field name="model">funnel.dashboard</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <tree string="Dashboard" sample="1" multi_edit="1">
+                <field name="lifecycle_stage" string="Lifecycle Stage" readonly="1"/>
+                <field name="date" string="Become Lifecycle Stage"/>
+            </tree>
+        </field>
+    </record> -->
+
+    <record id="funnel_dashboard_graph" model="ir.ui.view">
+        <field name="name">funnel.dashboard.graph</field>
+        <field name="model">funnel.dashboard</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <graph string="Funnel Dashboard">
+                <field name="lifecycle_stage" type="row"/>
+                <field name="total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="funnel_dashboard_pivot" model="ir.ui.view">
+        <field name="name">funnel.dashboard.pivot</field>
+        <field name="model">funnel.dashboard</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <pivot string="Detail Information">
+                <field name="lifecycle_stage" type="row"/>
+                <field name="utm_source_medium" type="col"/>
+                <field name="total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">funnel.dashboard</field>
+        <field name="view_mode">graph,pivot</field>
+    </record>
+
+    <!-- <record id="funnel_dashboard_view_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="funnel_dashboard_view"/>
+        <field name="act_window_id" ref="action_dashboard"/>
+    </record> -->
+    
+    <menuitem
+        action="action_dashboard"
+        id="contact_dashboard"
+        parent="contacts.menu_contacts"
+        name="Dashboards"
+        sequence="99"/>
+
+  </data>
+</odoo>
