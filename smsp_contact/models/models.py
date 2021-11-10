@@ -113,11 +113,15 @@ class ContactSMSP(models.Model):
                 raise ValidationError('Not a valid E-mail')
 
         """Duplicate Email and Phone Validation."""
+        if phone is None:
+            phone = False
+        if email is None:
+            email = False
         dup = self.env['res.partner'].search(
-            [('phone', '=', vals_list['phone']),
-             ('email', '=', vals_list['email']),
+            [('phone', '=', phone),
+             ('email', '=', email),
              ('is_company', '=', False)])
-        if len(dup) > 0 and not vals_list['is_company']:
+        if len(dup) > 0 and not vals_list.get('is_company'):
             raise ValidationError("Email and phone must be unique!")
         else:
             partner = super().create(vals_list)
