@@ -76,21 +76,34 @@ class ContactDashboard(models.Model):
                         counter += 1
             counter += 1
 
+        # test_dom = [('become_visitor_date', '>=', '1999-01-31 00:00:00'), ('utm_source', '=', 'google'), ('utm_medium', '=', None)]
+        # # test_dom = [('become_visitor_date', '>=', '1999-01-31 00:00:00'), ('utm_source', '=', 'google'), ('utm_medium', '=', 'cpc')]
+        # visitor_res = self.env['res.partner'].search_read(test_dom)
+        # print(visitor_res)
+        # print(len(visitor_res))
+
         # print('list', utm_source_medium_list)
         for utm in utm_source_medium_list:
+            # print(utm)
             data = utm.split('/')
 
             # Append in lifecycle domain list (used as data filter)
-            visitor_dom.append(('utm_source', '=', data[0]))
-            visitor_dom.append(('utm_medium', '=', data[1]))
-            lead_dom.append(('utm_source', '=', data[0]))
-            lead_dom.append(('utm_medium', '=', data[1]))
-            prospect_dom.append(('utm_source', '=', data[0]))
-            prospect_dom.append(('utm_medium', '=', data[1]))
-            customer_dom.append(('utm_source', '=', data[0]))
-            customer_dom.append(('utm_medium', '=', data[1]))
+            source, medium = None, None
+            if data[0]:
+                source = data[0]
+            if data[1]:
+                medium = data[1]
+            visitor_dom.append(('utm_source', '=', source))
+            visitor_dom.append(('utm_medium', '=', medium))
+            lead_dom.append(('utm_source', '=', source))
+            lead_dom.append(('utm_medium', '=', medium))
+            prospect_dom.append(('utm_source', '=', source))
+            prospect_dom.append(('utm_medium', '=', medium))
+            customer_dom.append(('utm_source', '=', source))
+            customer_dom.append(('utm_medium', '=', medium))
 
             # Create visitor
+            print(visitor_dom)
             visitor_res = self.env['res.partner'].search_read(visitor_dom)
             self.env['funnel.dashboard'].create({
                 'lifecycle_stage': '1: visitor',
@@ -99,6 +112,7 @@ class ContactDashboard(models.Model):
                 'utm_medium': data[1],
                 'utm_source_medium': utm
             })
+            print('visitor:', utm, ': ', len(visitor_res))
 
             # Create lead
             # print(lead_dom)
