@@ -76,13 +76,6 @@ class ContactDashboard(models.Model):
                         counter += 1
             counter += 1
 
-        # test_dom = [('become_visitor_date', '>=', '1999-01-31 00:00:00'), ('utm_source', '=', 'google'), ('utm_medium', '=', None)]
-        # # test_dom = [('become_visitor_date', '>=', '1999-01-31 00:00:00'), ('utm_source', '=', 'google'), ('utm_medium', '=', 'cpc')]
-        # visitor_res = self.env['res.partner'].search_read(test_dom)
-        # print(visitor_res)
-        # print(len(visitor_res))
-
-        # print('list', utm_source_medium_list)
         for utm in utm_source_medium_list:
             # print(utm)
             data = utm.split('/')
@@ -103,7 +96,7 @@ class ContactDashboard(models.Model):
             customer_dom.append(('utm_medium', '=', medium))
 
             # Create visitor
-            print(visitor_dom)
+            # print(visitor_dom)
             visitor_res = self.env['res.partner'].search_read(visitor_dom)
             self.env['funnel.dashboard'].create({
                 'lifecycle_stage': '1: visitor',
@@ -112,7 +105,7 @@ class ContactDashboard(models.Model):
                 'utm_medium': data[1],
                 'utm_source_medium': utm
             })
-            print('visitor:', utm, ': ', len(visitor_res))
+            # print('visitor:', utm, ': ', len(visitor_res))
 
             # Create lead
             # print(lead_dom)
@@ -182,4 +175,5 @@ class ContactDashboard(models.Model):
                     new_term.append(y)
                 x = new_term
             new_domain.append(x)
+        new_domain.append(('is_company', '=', False))
         return new_domain
