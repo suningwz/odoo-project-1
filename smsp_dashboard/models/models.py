@@ -29,7 +29,7 @@ class ContactDashboard(models.Model):
             Override read_group to calculate the sum of the lifecycle stage.
         """
 
-        start = time.perf_counter()
+        # start = time.perf_counter()
         # Delete all records first.
         funnel_data = self.env['funnel.dashboard'].search([])
         for funnel in funnel_data:
@@ -76,7 +76,7 @@ class ContactDashboard(models.Model):
                         counter += 1
             counter += 1
 
-        print('list', utm_source_medium_list)
+        # print('list', utm_source_medium_list)
         for utm in utm_source_medium_list:
             data = utm.split('/')
 
@@ -101,9 +101,9 @@ class ContactDashboard(models.Model):
             })
 
             # Create lead
-            print(lead_dom)
+            # print(lead_dom)
             lead_res = self.env['res.partner'].search(lead_dom)
-            print('lead res', lead_res)
+            # print('lead res', lead_res)
             self.env['funnel.dashboard'].create({
                 'lifecycle_stage': '2: lead',
                 'total': len(lead_res),
@@ -146,8 +146,8 @@ class ContactDashboard(models.Model):
             domain, fields, groupby, offset=offset, limit=limit,
             orderby=orderby, lazy=lazy
         )
-        end = time.perf_counter()
-        print('Time: ', end-start)
+        # end = time.perf_counter()
+        # print('Time: ', end-start)
         return res
 
     def convert_to_contact_domain(self, domain, to_domain):
