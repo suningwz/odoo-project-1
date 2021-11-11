@@ -97,9 +97,8 @@ class ContactSMSP(models.Model):
     @api.model
     def create(self, vals_list):
         """Phone Validation."""
-        phone = ''
-        if vals_list['phone']:
-            phone = vals_list['phone']
+        phone = vals_list.get('phone')
+        if phone:
             try:
                 if not self.check_phonenumber(phone):
                     raise ValidationError('Not a valid Phone')
@@ -107,19 +106,22 @@ class ContactSMSP(models.Model):
                 raise ValidationError(str(e))
 
         """Email Validation."""
-        email = ''
-        if vals_list['email']:
-            email = vals_list['email']
+        email = vals_list.get('email')
+        if email:
             match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
-            if match == None:
+            if match is None:
                 raise ValidationError('Not a valid E-mail')
 
         """Duplicate Email and Phone Validation."""
+        if phone is None:
+            phone = False
+        if email is None:
+            email = False
         dup = self.env['res.partner'].search(
-            [('phone', '=', vals_list['phone']),
-             ('email', '=', vals_list['email']),
+            [('phone', '=', phone),
+             ('email', '=', email),
              ('is_company', '=', False)])
-        if len(dup) > 0 and not vals_list['is_company']:
+        if len(dup) > 0 and not vals_list.get('is_company'):
             raise ValidationError("Email and phone must be unique!")
         else:
             partner = super().create(vals_list)
@@ -139,14 +141,14 @@ class ContactSMSP(models.Model):
         email = vals.get('email')
         if email:
             match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
-            if match == None:
+            if match is None:
                 raise ValidationError('Not a valid E-mail')
 
         """Duplicate Email and Phone Validation."""
         is_email_phone_change = True
-        if phone == None:
+        if phone is None:
             phone = False
-        if email == None:
+        if email is None:
             email = False
         if not (vals.get('phone') or vals.get('email')):
             is_email_phone_change = False
