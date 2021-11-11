@@ -28,11 +28,9 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/views.xml',
+        # 'views/views.xml',
         'views/templates.xml',
         'views/funnel_dashboard.xml',
-        'views/override_crm.xml',
-        'views/override_crm_lead.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
