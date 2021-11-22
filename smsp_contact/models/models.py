@@ -309,7 +309,7 @@ class StockMoveLineSMSP(models.Model):
 
     over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to move out while the quantity in source location is not enough.')
 
-    @api.depends('product_id.stock_quant_ids')
+    @api.depends('product_id.stock_quant_ids', 'qty_done')
     def _compute_over_quantity(self):
         for record in self:
             all_quants = record.product_id.stock_quant_ids
