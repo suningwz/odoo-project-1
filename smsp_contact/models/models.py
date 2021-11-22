@@ -309,13 +309,14 @@ class StockMoveLineSMSP(models.Model):
 
     over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to move out while the quantity in source location is not enough.')
 
+    @api.depends('product_id.stock_quant_ids')
     def _compute_over_quantity(self):
         for record in self:
             all_quants = record.product_id.stock_quant_ids
             record.over_quantity = False
             found = False
             for q in all_quants:
-                if q.location_id == record.location_id:
+                if q.location_id == record.location_id and q.lot_id == record.lot_id:
                     found = True
                     record.over_quantity = record.qty_done > q.quantity
             if found == False:
@@ -329,6 +330,7 @@ class StockPickingSMSP(models.Model):
     over_credit = fields.Boolean(string='Over Credit?', compute='_compute_over_credit', help='It indicates this contact has more credit limit that it should be.')
     has_overdue = fields.Boolean(string='Has Overdue?', compute='_compute_has_overdue', help='It indicates this contact has 1 or more overdue invoices.')
 
+    @api.depends('move_line_ids_without_package')
     def _compute_over_quantity(self):
         for record in self:
             all_quants = record.move_line_ids_without_package
@@ -341,6 +343,7 @@ class StockPickingSMSP(models.Model):
             if record.picking_type_id.name == 'Receipts':
                 record.over_quantity = False
 
+    @api.depends('partner_id')
     def _compute_over_credit(self):
         for record in self:
             limit = 0
@@ -368,10 +371,11 @@ class StockPickingSMSP(models.Model):
                     used_credit += inv.amount_total
             record.over_credit = used_credit > limit
 
+    @api.depends('partner_id')
     def _compute_has_overdue(self):
         for record in self:
-            # record.has_overdue = record.partner_id.total_overdue > 0
-            record.has_overdue = 1 == 0
+            record.has_overdue = record.partner_id.total_overdue > 0
+            # record.has_overdue = 1 == 0
 
 
 class PurchaseOrderSMSP(models.Model):
