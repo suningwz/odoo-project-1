@@ -8,13 +8,17 @@
         <xpath expr="//field[@name='origin']" position="after">
           <field name="over_quantity" string="Over Quantity?" readonly="1"/>
         </xpath>
-
+        <!-- This is later in Odoo 15
         <xpath expr="//button[@name='button_mark_done'][3]" position="attributes">
           <attribute name="attrs">{'invisible': [                         '|','|',                         ('move_raw_ids', '=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
         </xpath>
 
         <xpath expr="//button[@name='button_mark_done'][4]" position="attributes">
           <attribute name="attrs">{'invisible': [                         '|','|',                         ('move_raw_ids', '!=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
+        </xpath> -->
+
+        <xpath expr="//button[@name='button_mark_done'][2]" position="attributes">
+          <attribute name="attrs">{'invisible': [                         '&amp;',                         '|','|',                         ('state', 'not in', ('confirmed', 'progress')),('over_quantity', '!=', False),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
         </xpath>
       </field>
     </record>
