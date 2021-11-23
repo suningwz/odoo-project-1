@@ -326,9 +326,9 @@ class StockMoveLineSMSP(models.Model):
 class StockPickingSMSP(models.Model):
     _inherit = 'stock.picking'
 
-    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates there is at least 1 moving out product which more than the stock in source location.')
-    over_credit = fields.Boolean(string='Over Credit?', compute='_compute_over_credit', help='It indicates this contact has more credit limit that it should be.')
-    has_overdue = fields.Boolean(string='Has Overdue?', compute='_compute_has_overdue', help='It indicates this contact has 1 or more overdue invoices.')
+    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates there is at least 1 moving out product which more than the stock in source location.', readonly=False)
+    over_credit = fields.Boolean(string='Over Credit?', compute='_compute_over_credit', help='It indicates this contact has more credit limit that it should be.', readonly=False)
+    has_overdue = fields.Boolean(string='Has Overdue?', compute='_compute_has_overdue', help='It indicates this contact has 1 or more overdue invoices.', readonly=False)
 
     @api.depends('move_line_ids_without_package')
     def _compute_over_quantity(self):
@@ -377,6 +377,17 @@ class StockPickingSMSP(models.Model):
             record.has_overdue = record.partner_id.total_overdue > 0
             # record.has_overdue = 1 == 0
 
+    def button_validate(self):
+        self._compute_over_quantity()
+        self._compute_over_credit()
+        self._compute_has_overdue()
+
+        if self.over_quantity or self.over_credit or self.has_overdue:
+            raise ValidationError("Check the quantity or credit or overdue!")
+        else:
+            res = super().button_validate()
+            return res
+
 
 class PurchaseOrderSMSP(models.Model):
     _inherit = 'purchase.order'
@@ -395,3 +406,19 @@ class PurchaseOrderSMSP(models.Model):
 
             if received:
                 record.is_complete_received = True
+
+
+class ManufactureSMSP(models.Model):
+    _inherit = 'mrp.production'
+
+    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to be consumed while the quantity in source location is not enough.', readonly=False)
+
+    @api.depends('move_raw_ids')
+    def _compute_over_quantity(self):
+        for record in self:
+            all_quants = record.move_raw_ids.move_line_ids
+            record.over_quantity = False
+            for q in all_quants:
+                if q.over_quantity:
+                    record.over_quantity = q.over_quantity
+                    break

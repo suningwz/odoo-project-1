@@ -1,0 +1,22 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="override_manufacture">
+      <field name="name">override.manufacture</field>
+      <field name="model">mrp.production</field>
+      <field name="inherit_id" ref="mrp.mrp_production_form_view" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='analytic_account_id']" position="after">
+          <field name="over_quantity" string="Over Quantity?" readonly="1"/>
+        </xpath>
+
+        <xpath expr="//button[@name='button_mark_done'][3]" position="attributes">
+          <attribute name="attrs">{'invisible': [                         '|','|',                         ('move_raw_ids', '=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
+        </xpath>
+
+        <xpath expr="//button[@name='button_mark_done'][4]" position="attributes">
+          <attribute name="attrs">{'invisible': [                         '|','|',                         ('move_raw_ids', '!=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

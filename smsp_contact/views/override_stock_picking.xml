@@ -46,9 +46,9 @@
           </form>
         </xpath>
         <xpath expr="//field[@name='group_id']" position="after">
-          <field name="over_quantity" string="Over Quantity?"/>
-          <field name="over_credit" string="Over Credit?"/>
-          <field name="has_overdue" string="Has Overdue?"/>
+          <field name="over_quantity" string="Over Quantity?" readonly="1"/>
+          <field name="over_credit" string="Over Credit?" readonly="1"/>
+          <field name="has_overdue" string="Has Overdue?" readonly="1"/>
         </xpath>
 
         <xpath expr="//button[@name='button_validate'][@class='oe_highlight']" position="attributes">
