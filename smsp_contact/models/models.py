@@ -326,9 +326,9 @@ class StockMoveLineSMSP(models.Model):
 class StockPickingSMSP(models.Model):
     _inherit = 'stock.picking'
 
-    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates there is at least 1 moving out product which more than the stock in source location.')
-    over_credit = fields.Boolean(string='Over Credit?', compute='_compute_over_credit', help='It indicates this contact has more credit limit that it should be.')
-    has_overdue = fields.Boolean(string='Has Overdue?', compute='_compute_has_overdue', help='It indicates this contact has 1 or more overdue invoices.')
+    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates there is at least 1 moving out product which more than the stock in source location.', readonly=False)
+    over_credit = fields.Boolean(string='Over Credit?', compute='_compute_over_credit', help='It indicates this contact has more credit limit that it should be.', readonly=False)
+    has_overdue = fields.Boolean(string='Has Overdue?', compute='_compute_has_overdue', help='It indicates this contact has 1 or more overdue invoices.', readonly=False)
 
     @api.depends('move_line_ids_without_package')
     def _compute_over_quantity(self):
