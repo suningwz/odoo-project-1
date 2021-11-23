@@ -10,7 +10,7 @@
         </xpath>
 
         <xpath expr="//button[@name='button_mark_done'][3]" position="attributes">
-          <attribute name="attrs">invisible': [                         '|','|',                         ('move_raw_ids', '=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
+          <attribute name="attrs">{'invisible': [                         '|','|',                         ('move_raw_ids', '=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
         </xpath>
 
         <xpath expr="//button[@name='button_mark_done'][4]" position="attributes">
