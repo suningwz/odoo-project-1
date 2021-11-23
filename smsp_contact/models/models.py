@@ -377,6 +377,17 @@ class StockPickingSMSP(models.Model):
             record.has_overdue = record.partner_id.total_overdue > 0
             # record.has_overdue = 1 == 0
 
+    def button_validate(self):
+        self._compute_over_quantity()
+        self._compute_over_credit()
+        self._compute_has_overdue()
+
+        if self.over_quantity or self.over_credit or self.has_overdue:
+            raise ValidationError("Check the quantity or credit or overdue!")
+        else:
+            res = super().button_validate()
+            return res
+
 
 class PurchaseOrderSMSP(models.Model):
     _inherit = 'purchase.order'
