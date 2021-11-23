@@ -5,9 +5,9 @@
       <field name="model">mrp.production</field>
       <field name="inherit_id" ref="mrp.mrp_production_form_view" />
       <field name="arch" type="xml">
-        <xpath expr="//field[@name='origin']" position="after">
+        <!-- <xpath expr="//field[@name='origin']" position="after">
           <field name="over_quantity" string="Over Quantity?" readonly="1"/>
-        </xpath>
+        </xpath> -->
         <!-- This is later in Odoo 15
         <xpath expr="//button[@name='button_mark_done'][3]" position="attributes">
           <attribute name="attrs">{'invisible': [                         '|','|',                         ('move_raw_ids', '=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
