@@ -9,16 +9,11 @@
           <field name="over_quantity" string="Over Quantity?"/>
         </xpath>
 
-        <xpath expr="//button[@name='button_mark_done'][@string='Mark as Done'][1]" position="attributes">
+        <xpath expr="//button[@name='button_mark_done'][3]" position="attributes">
           <attribute name="attrs">invisible': [                         '|','|',                         ('move_raw_ids', '=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
-
-          <button name="button_mark_done" string="Validate" type="object" class="oe_highlight" confirm="There are no components to consume. Are you still sure you want to continue?" data-hotkey="g"/>
-          <button name="button_mark_done" string="Validate" type="object" class="oe_highlight" data-hotkey="g"/>
-          <button name="button_mark_done" attrs="{'invisible': [                         '|',                         ('move_raw_ids', '=', []),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}" string="Mark as Done" type="object" class="oe_highlight" data-hotkey="g"/>
-          <button name="button_mark_done" attrs="{'invisible': [                         '|',                         ('move_raw_ids', '!=', []),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}" string="Mark as Done" type="object" class="oe_highlight" data-hotkey="g" confirm="There are no components to consume. Are you still sure you want to continue?"/>
         </xpath>
 
-        <xpath expr="//button[@name='button_mark_done'][@string='Mark as Done'][2]" position="attributes">
+        <xpath expr="//button[@name='button_mark_done'][4]" position="attributes">
           <attribute name="attrs">{'invisible': [                         '|','|',                         ('move_raw_ids', '!=', []),('over_quantity', '!=', False),                         '&amp;',                         '|',                         ('state', 'not in', ('confirmed', 'progress')),                         ('qty_producing', '!=', 0),                         ('state', '!=', 'to_close')]}</attribute>
         </xpath>
       </field>
