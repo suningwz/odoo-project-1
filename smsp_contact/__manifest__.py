@@ -26,6 +26,7 @@
         - Add validation in create and update for duplicating email and phone
         - Make button validate invisible when there is a stock minus, over credit limit, and overdue invoice.
         - Add boolean variable in PO to check if all products in that PO is fully received or not
+        - Add validation for non-negative stock in manufacture order (prevent mark as done when it's happened).
     """,
 
     'author': "My Company",
@@ -49,6 +50,7 @@
         'views/override_crm_lead.xml',
         'views/override_stock_picking.xml',
         'views/override_purchase_order.xml',
+        'views/override_manufacture.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
