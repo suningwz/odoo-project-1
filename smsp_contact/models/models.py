@@ -406,8 +406,8 @@ class StockPickingSMSP(models.Model):
 
     def button_validate(self):
         self._compute_over_quantity()
-        self._compute_over_credit()
-        self._compute_has_overdue()
+        # self._compute_over_credit()
+        # self._compute_has_overdue()
 
         if self.over_quantity or self.over_credit or self.has_overdue:
             raise ValidationError("Check the quantity or credit or overdue!")
