@@ -7,10 +7,25 @@
       <field name="arch" type="xml">
         <xpath expr="//field[@name='date_deadline']" position="after">
           <field name="expected_tonnage" string="Expected Tonnage"/>
-          <field name="utm_source" string="UTM Source"/>
-          <field name="utm_medium" string="UTM Medium"/>
-          <field name="utm_term" string="UTM Term"/>
-          <field name="utm_campaign" string="UTM Campaign"/>
+        </xpath>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="analyze_data">
+      <field name="name">analyze.data</field>
+      <field name="model">crm.lead</field>
+      <field name="inherit_id" ref="crm.crm_lead_view_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//page[@name='extra']" position='after'>
+        <!-- <xpath expr="//field[@name='website']" position="after"> -->
+          <page name="analyzing" string="Analyzing">
+            <group name="data" string="Data">
+              <field name="utm_source" string="UTM Source"/>
+              <field name="utm_medium" string="UTM Medium"/>
+              <field name="utm_campaign" string="UTM Campaign"/>
+              <field name="utm_term" string="UTM Term"/>
+            </group>
+          </page>
         </xpath>
       </field>
     </record>
