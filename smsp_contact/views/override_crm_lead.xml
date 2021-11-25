@@ -11,8 +11,8 @@
       </field>
     </record>
 
-    <record model="ir.ui.view" id="analyze_data">
-      <field name="name">analyze.data</field>
+    <record model="ir.ui.view" id="lead_analyze_data">
+      <field name="name">lead.analyze.data</field>
       <field name="model">crm.lead</field>
       <field name="inherit_id" ref="crm.crm_lead_view_form" />
       <field name="arch" type="xml">
