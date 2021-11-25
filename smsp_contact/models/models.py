@@ -225,6 +225,33 @@ class LeadSMSP(models.Model):
     _inherit = 'crm.lead'
 
     expected_tonnage = fields.Float(string='Expected Tonnage', default=0.0)
+    utm_source = fields.Selection([
+        ('google', 'Google'),
+        ('facebook', 'Facebook'),
+        ('instagram', 'Instagram'),
+        ('twitter', 'Twitter'),
+        ('pinterest', 'Pinterest'),
+        ('linkedin', 'LinkedIn'),
+        ('tokopedia', 'Tokopedia'),
+        ('newsletter', 'Newsletter'),
+        ('outbound', 'Outbound'),
+        ('referral', 'Referral'),
+        ('direct', 'Direct')],
+        string='UTM Source', index=True, readonly=False, store=True)
+    utm_medium = fields.Selection([
+        ('cpc', 'CPC'),
+        ('display', 'Display'),
+        ('search', 'Search'),
+        ('email', 'E-mail'),
+        ('social', 'Social'),
+        ('blog', 'Blog'),
+        ('canvasing', 'Canvasing'),
+        ('phone', 'Phone')],
+        string='UTM Medium', index=True, readonly=False, store=True)
+    utm_campaign = fields.Char(
+        'UTM Campaign', index=True, readonly=False, store=True)
+    utm_term = fields.Char(
+        'UTM Term', index=True, readonly=False, store=True)
 
     @api.model
     def create(self, vals_list):
@@ -379,8 +406,8 @@ class StockPickingSMSP(models.Model):
 
     def button_validate(self):
         self._compute_over_quantity()
-        self._compute_over_credit()
-        self._compute_has_overdue()
+        # self._compute_over_credit()
+        # self._compute_has_overdue()
 
         if self.over_quantity or self.over_credit or self.has_overdue:
             raise ValidationError("Check the quantity or credit or overdue!")
