@@ -2,10 +2,12 @@
 
 from odoo import models, fields, api, tools
 from odoo.exceptions import UserError, ValidationError
+from ..settings import CONTACT_CONNECTOR_API
 
 import datetime
 import phonenumbers
 import re
+import requests
 
 
 class IndustrySMSP(models.Model):
@@ -125,6 +127,32 @@ class ContactSMSP(models.Model):
             raise ValidationError("Email and phone must be unique!")
         else:
             partner = super().create(vals_list)
+            data = self.env['res.partner'].search_read(
+                [('id', '=', partner.id)],
+                [
+                    'id', 'name', 'email', 'phone', 'lifecycle_stage',
+                    'become_visitor_date', 'become_lead_date',
+                    'become_prospect_date', 'become_customer_date',
+                    'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
+                ]
+            )
+            result = data[0]
+            if result.get('become_visitor_date'):
+                result['become_visitor_date'] = str(result['become_visitor_date'])
+            if result.get('become_lead_date'):
+                result['become_lead_date'] = str(result['become_lead_date'])
+            if result.get('become_prospect_date'):
+                result['become_prospect_date'] = str(result['become_prospect_date'])
+            if result.get('become_customer_date'):
+                result['become_customer_date'] = str(result['become_customer_date'])
+
+            # Send to contact connector service API
+            try:
+                url = CONTACT_CONNECTOR_API
+                requests.post(url, json=result[0])
+            except Exception:
+                pass
+
             return partner
 
     def write(self, vals):
@@ -163,6 +191,23 @@ class ContactSMSP(models.Model):
             raise ValidationError("Email and phone must be unique!")
         else:
             partner = super().write(vals)
+            data = self.env['res.partner'].search_read(
+                [('id', '=', partner.id)],
+                [
+                    'id', 'name', 'email', 'phone', 'lifecycle_stage',
+                    'become_visitor_date', 'become_lead_date',
+                    'become_prospect_date', 'become_customer_date',
+                    'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
+                ]
+            )
+            result = data[0]
+            # Send to contact connector service API
+            try:
+                url = CONTACT_CONNECTOR_API
+                resp = requests.post(url, json=result)
+                print(resp)
+            except Exception:
+                pass
             return partner
 
     def convert_phonenumber(self, phonenumber):
