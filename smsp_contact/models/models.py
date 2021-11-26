@@ -191,23 +191,23 @@ class ContactSMSP(models.Model):
             raise ValidationError("Email and phone must be unique!")
         else:
             partner = super().write(vals)
-            data = self.env['res.partner'].search_read(
-                [('id', '=', partner.id)],
-                [
-                    'id', 'name', 'email', 'phone', 'lifecycle_stage',
-                    'become_visitor_date', 'become_lead_date',
-                    'become_prospect_date', 'become_customer_date',
-                    'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
-                ]
-            )
-            result = data[0]
-            # Send to contact connector service API
-            try:
-                url = CONTACT_CONNECTOR_API
-                resp = requests.post(url, json=result)
-                print(resp)
-            except Exception:
-                pass
+            # data = self.env['res.partner'].search_read(
+            #     [('id', '=', partner.id)],
+            #     [
+            #         'id', 'name', 'email', 'phone', 'lifecycle_stage',
+            #         'become_visitor_date', 'become_lead_date',
+            #         'become_prospect_date', 'become_customer_date',
+            #         'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
+            #     ]
+            # )
+            # result = data[0]
+            # # Send to contact connector service API
+            # try:
+            #     url = CONTACT_CONNECTOR_API
+            #     resp = requests.post(url, json=result)
+            #     print(resp)
+            # except Exception:
+            #     pass
             return partner
 
     def convert_phonenumber(self, phonenumber):
