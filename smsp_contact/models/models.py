@@ -137,6 +137,7 @@ class ContactSMSP(models.Model):
                 ]
             )
             result = data[0]
+            result['method'] = 'create'
             if result.get('become_visitor_date'):
                 result['become_visitor_date'] = str(result['become_visitor_date'])
             if result.get('become_lead_date'):
@@ -191,23 +192,36 @@ class ContactSMSP(models.Model):
             raise ValidationError("Email and phone must be unique!")
         else:
             partner = super().write(vals)
-            # data = self.env['res.partner'].search_read(
-            #     [('id', '=', partner.id)],
-            #     [
-            #         'id', 'name', 'email', 'phone', 'lifecycle_stage',
-            #         'become_visitor_date', 'become_lead_date',
-            #         'become_prospect_date', 'become_customer_date',
-            #         'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
-            #     ]
-            # )
-            # result = data[0]
-            # # Send to contact connector service API
-            # try:
-            #     url = CONTACT_CONNECTOR_API
-            #     resp = requests.post(url, json=result)
-            #     print(resp)
-            # except Exception:
-            #     pass
+            data = self.env['res.partner'].search_read(
+                [('id', '=', self.id)],
+                [
+                    'id', 'name', 'email', 'phone', 'lifecycle_stage',
+                    'become_visitor_date', 'become_lead_date',
+                    'become_prospect_date', 'become_customer_date',
+                    'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
+                ]
+            )
+            if len(data) > 0:
+                result = data[0]
+                result['method'] = 'update'
+
+                if result.get('become_visitor_date'):
+                    result['become_visitor_date'] = str(result['become_visitor_date'])
+                if result.get('become_lead_date'):
+                    result['become_lead_date'] = str(result['become_lead_date'])
+                if result.get('become_prospect_date'):
+                    result['become_prospect_date'] = str(result['become_prospect_date'])
+                if result.get('become_customer_date'):
+                    result['become_customer_date'] = str(result['become_customer_date'])
+
+                print(result)
+                # Send to contact connector service API
+                try:
+                    url = CONTACT_CONNECTOR_API
+                    resp = requests.post(url, json=result)
+                    print(resp)
+                except Exception as e:
+                    print(e)
             return partner
 
     def convert_phonenumber(self, phonenumber):
@@ -522,17 +536,17 @@ class PurchaseOrderSMSP(models.Model):
                 record.is_complete_received = True
 
 
-class ManufactureSMSP(models.Model):
-    _inherit = 'mrp.production'
+# class ManufactureSMSP(models.Model):
+#     _inherit = 'mrp.production'
 
-    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to be consumed while the quantity in source location is not enough.', readonly=False)
+#     over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to be consumed while the quantity in source location is not enough.', readonly=False)
 
-    @api.depends('move_raw_ids')
-    def _compute_over_quantity(self):
-        for record in self:
-            all_quants = record.move_raw_ids.move_line_ids
-            record.over_quantity = False
-            for q in all_quants:
-                if q.over_quantity:
-                    record.over_quantity = q.over_quantity
-                    break
+#     @api.depends('move_raw_ids')
+#     def _compute_over_quantity(self):
+#         for record in self:
+#             all_quants = record.move_raw_ids.move_line_ids
+#             record.over_quantity = False
+#             for q in all_quants:
+#                 if q.over_quantity:
+#                     record.over_quantity = q.over_quantity
+#                     break
