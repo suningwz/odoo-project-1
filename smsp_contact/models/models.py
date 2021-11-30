@@ -536,17 +536,17 @@ class PurchaseOrderSMSP(models.Model):
                 record.is_complete_received = True
 
 
-# class ManufactureSMSP(models.Model):
-#     _inherit = 'mrp.production'
+class ManufactureSMSP(models.Model):
+    _inherit = 'mrp.production'
 
-#     over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to be consumed while the quantity in source location is not enough.', readonly=False)
+    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to be consumed while the quantity in source location is not enough.', readonly=False)
 
-#     @api.depends('move_raw_ids')
-#     def _compute_over_quantity(self):
-#         for record in self:
-#             all_quants = record.move_raw_ids.move_line_ids
-#             record.over_quantity = False
-#             for q in all_quants:
-#                 if q.over_quantity:
-#                     record.over_quantity = q.over_quantity
-#                     break
+    @api.depends('move_raw_ids')
+    def _compute_over_quantity(self):
+        for record in self:
+            all_quants = record.move_raw_ids.move_line_ids
+            record.over_quantity = False
+            for q in all_quants:
+                if q.over_quantity:
+                    record.over_quantity = q.over_quantity
+                    break

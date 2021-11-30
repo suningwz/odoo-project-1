@@ -50,7 +50,7 @@
         'views/override_crm_lead.xml',
         'views/override_stock_picking.xml',
         'views/override_purchase_order.xml',
-        # 'views/override_manufacture.xml',
+        'views/override_manufacture.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
