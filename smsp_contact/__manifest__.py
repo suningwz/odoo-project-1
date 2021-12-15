@@ -27,6 +27,7 @@
         - Make button validate invisible when there is a stock minus, over credit limit, and overdue invoice.
         - Add boolean variable in PO to check if all products in that PO is fully received or not
         - Add validation for non-negative stock in manufacture order (prevent mark as done when it's happened).
+        - Add posted_cost and posted_total_cost to record cost for each invoice line at that time when the invoice has been posted.
     """,
 
     'author': "My Company",

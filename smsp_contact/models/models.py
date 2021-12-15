@@ -348,7 +348,7 @@ class LeadSMSP(models.Model):
             old_partner.write({'become_prospect_date': None,
                                'lifecycle_stage': 'lead'})
         return super().unlink()
-    
+
     def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
         """ Extract data from lead to create a partner.
 
@@ -534,6 +534,26 @@ class PurchaseOrderSMSP(models.Model):
 
             if received:
                 record.is_complete_received = True
+
+
+class AccountMoveLineSMSP(models.Model):
+    _inherit = 'account.move.line'
+
+    posted_cost = fields.Float(string='Posted Cost', digits='Product Price', default=0.0)
+    posted_total_cost = fields.Float(string='Posted Total Cost', digits='Product Price', default=0.0)
+
+
+class AccountMoveSMSP(models.Model):
+    _inherit = 'account.move'
+
+    def action_post(self):
+        for record in self:
+            all_lines = record.invoice_line_ids
+            for l in all_lines:
+                l.posted_cost = l.product_id.standard_price
+                l.posted_total_cost = l.posted_cost * l.quantity
+        res = super().action_post()
+        return res
 
 
 class ManufactureSMSP(models.Model):
