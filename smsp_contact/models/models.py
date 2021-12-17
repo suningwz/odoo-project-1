@@ -96,6 +96,10 @@ class ContactSMSP(models.Model):
     #     ('email_phone_uniq', 'unique (email,phone)', 'The email and phone must be unique for each customer !'),
     # ]
 
+    _sql_constraints = [
+        ('email_phone_uniq', 'Check(1=1)', 'The email and phone must be unique for each customer !'),
+    ]
+
     # @api.model
     # def create(self, vals_list):
     #     """Phone Validation."""
