@@ -96,133 +96,133 @@ class ContactSMSP(models.Model):
         ('email_phone_uniq', 'unique (email,phone)', 'The email and phone must be unique for each customer !'),
     ]
 
-    @api.model
-    def create(self, vals_list):
-        """Phone Validation."""
-        phone = vals_list.get('phone')
-        if phone:
-            try:
-                if not self.check_phonenumber(phone):
-                    raise ValidationError('Not a valid Phone')
-            except Exception as e:
-                raise ValidationError(str(e))
-
-        """Email Validation."""
-        email = vals_list.get('email')
-        if email:
-            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
-            if match is None:
-                raise ValidationError('Not a valid E-mail')
-
-        """Duplicate Email and Phone Validation."""
-        if phone is None:
-            phone = False
-        if email is None:
-            email = False
-        dup = self.env['res.partner'].search(
-            [('phone', '=', phone),
-             ('email', '=', email),
-             ('is_company', '=', False)])
-        if len(dup) > 0 and not vals_list.get('is_company'):
-            raise ValidationError("Email and phone must be unique!")
-        else:
-            partner = super().create(vals_list)
-            data = self.env['res.partner'].search_read(
-                [('id', '=', partner.id)],
-                [
-                    'id', 'name', 'email', 'phone', 'lifecycle_stage',
-                    'become_visitor_date', 'become_lead_date',
-                    'become_prospect_date', 'become_customer_date',
-                    'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
-                ]
-            )
-            result = data[0]
-            result['method'] = 'create'
-            if result.get('become_visitor_date'):
-                result['become_visitor_date'] = str(result['become_visitor_date'])
-            if result.get('become_lead_date'):
-                result['become_lead_date'] = str(result['become_lead_date'])
-            if result.get('become_prospect_date'):
-                result['become_prospect_date'] = str(result['become_prospect_date'])
-            if result.get('become_customer_date'):
-                result['become_customer_date'] = str(result['become_customer_date'])
-
-            # Send to contact connector service API
-            try:
-                url = CONTACT_CONNECTOR_API
-                requests.post(url, json=result[0])
-            except Exception:
-                pass
-
-            return partner
-
-    def write(self, vals):
-        """Phone Validation."""
-        phone = vals.get('phone')
-        if phone:
-            try:
-                if not self.check_phonenumber(phone):
-                    raise ValidationError('Not a valid Phone')
-            except Exception as e:
-                raise ValidationError(str(e))
-
-        """Email Validation."""
-        email = vals.get('email')
-        if email:
-            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
-            if match is None:
-                raise ValidationError('Not a valid E-mail')
-
-        """Duplicate Email and Phone Validation."""
-        is_email_phone_change = True
-        if phone is None:
-            phone = False
-        if email is None:
-            email = False
-        if not (vals.get('phone') or vals.get('email')):
-            is_email_phone_change = False
-        is_company = vals.get('is_company')
-        if not is_company:
-            is_company = self.is_company
-        dup = self.env['res.partner'].search(
-            [('phone', '=', phone),
-             ('email', '=', email),
-             ('is_company', '=', False)])
-        if len(dup) > 0 and not is_company and is_email_phone_change:
-            raise ValidationError("Email and phone must be unique!")
-        else:
-            partner = super().write(vals)
-            data = self.env['res.partner'].search_read(
-                [('id', '=', self.id)],
-                [
-                    'id', 'name', 'email', 'phone', 'lifecycle_stage',
-                    'become_visitor_date', 'become_lead_date',
-                    'become_prospect_date', 'become_customer_date',
-                    'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
-                ]
-            )
-            if len(data) > 0:
-                result = data[0]
-                result['method'] = 'update'
-
-                if result.get('become_visitor_date'):
-                    result['become_visitor_date'] = str(result['become_visitor_date'])
-                if result.get('become_lead_date'):
-                    result['become_lead_date'] = str(result['become_lead_date'])
-                if result.get('become_prospect_date'):
-                    result['become_prospect_date'] = str(result['become_prospect_date'])
-                if result.get('become_customer_date'):
-                    result['become_customer_date'] = str(result['become_customer_date'])
-
-                print(result)
-                # Send to contact connector service API
-                try:
-                    url = CONTACT_CONNECTOR_API
-                    resp = requests.post(url, json=result)
-                    print(resp)
-                except Exception as e:
-                    print(e)
-            return partner
+    # @api.model
+    # def create(self, vals_list):
+    #     """Phone Validation."""
+    #     phone = vals_list.get('phone')
+    #     if phone:
+    #         try:
+    #             if not self.check_phonenumber(phone):
+    #                 raise ValidationError('Not a valid Phone')
+    #         except Exception as e:
+    #             raise ValidationError(str(e))
+    #
+    #     """Email Validation."""
+    #     email = vals_list.get('email')
+    #     if email:
+    #         match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
+    #         if match is None:
+    #             raise ValidationError('Not a valid E-mail')
+    #
+    #     """Duplicate Email and Phone Validation."""
+    #     if phone is None:
+    #         phone = False
+    #     if email is None:
+    #         email = False
+    #     dup = self.env['res.partner'].search(
+    #         [('phone', '=', phone),
+    #          ('email', '=', email),
+    #          ('is_company', '=', False)])
+    #     if len(dup) > 0 and not vals_list.get('is_company'):
+    #         raise ValidationError("Email and phone must be unique!")
+    #     else:
+    #         partner = super().create(vals_list)
+    #         data = self.env['res.partner'].search_read(
+    #             [('id', '=', partner.id)],
+    #             [
+    #                 'id', 'name', 'email', 'phone', 'lifecycle_stage',
+    #                 'become_visitor_date', 'become_lead_date',
+    #                 'become_prospect_date', 'become_customer_date',
+    #                 'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
+    #             ]
+    #         )
+    #         result = data[0]
+    #         result['method'] = 'create'
+    #         if result.get('become_visitor_date'):
+    #             result['become_visitor_date'] = str(result['become_visitor_date'])
+    #         if result.get('become_lead_date'):
+    #             result['become_lead_date'] = str(result['become_lead_date'])
+    #         if result.get('become_prospect_date'):
+    #             result['become_prospect_date'] = str(result['become_prospect_date'])
+    #         if result.get('become_customer_date'):
+    #             result['become_customer_date'] = str(result['become_customer_date'])
+    #
+    #         # Send to contact connector service API
+    #         try:
+    #             url = CONTACT_CONNECTOR_API
+    #             requests.post(url, json=result[0])
+    #         except Exception:
+    #             pass
+    #
+    #         return partner
+    #
+    # def write(self, vals):
+    #     """Phone Validation."""
+    #     phone = vals.get('phone')
+    #     if phone:
+    #         try:
+    #             if not self.check_phonenumber(phone):
+    #                 raise ValidationError('Not a valid Phone')
+    #         except Exception as e:
+    #             raise ValidationError(str(e))
+    #
+    #     """Email Validation."""
+    #     email = vals.get('email')
+    #     if email:
+    #         match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
+    #         if match is None:
+    #             raise ValidationError('Not a valid E-mail')
+    #
+    #     """Duplicate Email and Phone Validation."""
+    #     is_email_phone_change = True
+    #     if phone is None:
+    #         phone = False
+    #     if email is None:
+    #         email = False
+    #     if not (vals.get('phone') or vals.get('email')):
+    #         is_email_phone_change = False
+    #     is_company = vals.get('is_company')
+    #     if not is_company:
+    #         is_company = self.is_company
+    #     dup = self.env['res.partner'].search(
+    #         [('phone', '=', phone),
+    #          ('email', '=', email),
+    #          ('is_company', '=', False)])
+    #     if len(dup) > 0 and not is_company and is_email_phone_change:
+    #         raise ValidationError("Email and phone must be unique!")
+    #     else:
+    #         partner = super().write(vals)
+    #         data = self.env['res.partner'].search_read(
+    #             [('id', '=', self.id)],
+    #             [
+    #                 'id', 'name', 'email', 'phone', 'lifecycle_stage',
+    #                 'become_visitor_date', 'become_lead_date',
+    #                 'become_prospect_date', 'become_customer_date',
+    #                 'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
+    #             ]
+    #         )
+    #         if len(data) > 0:
+    #             result = data[0]
+    #             result['method'] = 'update'
+    #
+    #             if result.get('become_visitor_date'):
+    #                 result['become_visitor_date'] = str(result['become_visitor_date'])
+    #             if result.get('become_lead_date'):
+    #                 result['become_lead_date'] = str(result['become_lead_date'])
+    #             if result.get('become_prospect_date'):
+    #                 result['become_prospect_date'] = str(result['become_prospect_date'])
+    #             if result.get('become_customer_date'):
+    #                 result['become_customer_date'] = str(result['become_customer_date'])
+    #
+    #             print(result)
+    #             # Send to contact connector service API
+    #             try:
+    #                 url = CONTACT_CONNECTOR_API
+    #                 resp = requests.post(url, json=result)
+    #                 print(resp)
+    #             except Exception as e:
+    #                 print(e)
+    #         return partner
 
     def convert_phonenumber(self, phonenumber):
         if phonenumber[0] == '0':
