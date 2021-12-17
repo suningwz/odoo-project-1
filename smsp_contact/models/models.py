@@ -556,6 +556,13 @@ class AccountMoveSMSP(models.Model):
         return res
 
 
+class ProductSMSP(models.Model):
+    _inherit = 'product.template'
+
+    accurate_id = fields.Char(
+        'Accurate ID', index=True, readonly=False, store=True)
+
+
 class ProductVariantSMSP(models.Model):
     _inherit = 'product.product'
 
