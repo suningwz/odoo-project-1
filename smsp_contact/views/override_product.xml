@@ -21,5 +21,16 @@
         </xpath>
       </field>
     </record>
+
+    <record model="ir.ui.view" id="override_product_categories">
+      <field name="name">override.product.categories</field>
+      <field name="model">product.category</field>
+      <field name="inherit_id" ref="product.product_category_form_view" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='parent_id']" position="after">
+          <field name="code" string="Code"/>
+        </xpath>
+      </field>
+    </record>
   </data>
 </odoo>

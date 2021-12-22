@@ -574,17 +574,101 @@ class ProductVariantSMSP(models.Model):
         'Accurate ID', index=True, readonly=False, store=True)
 
 
-class ManufactureSMSP(models.Model):
-    _inherit = 'mrp.production'
+# class ManufactureSMSP(models.Model):
+#     _inherit = 'mrp.production'
 
-    over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to be consumed while the quantity in source location is not enough.', readonly=False)
+#     over_quantity = fields.Boolean(string='Over Quantity?', compute='_compute_over_quantity', help='It indicates this line of product is about to be consumed while the quantity in source location is not enough.', readonly=False)
 
-    @api.depends('move_raw_ids')
-    def _compute_over_quantity(self):
-        for record in self:
-            all_quants = record.move_raw_ids.move_line_ids
-            record.over_quantity = False
-            for q in all_quants:
-                if q.over_quantity:
-                    record.over_quantity = q.over_quantity
-                    break
+#     @api.depends('move_raw_ids')
+#     def _compute_over_quantity(self):
+#         for record in self:
+#             all_quants = record.move_raw_ids.move_line_ids
+#             record.over_quantity = False
+#             for q in all_quants:
+#                 if q.over_quantity:
+#                     record.over_quantity = q.over_quantity
+#                     break
+
+
+class ProductCategorySMSP(models.Model):
+    _inherit = 'product.category'
+
+    code = fields.Char(
+        'Code', index=True, readonly=False, store=True)
+
+    @api.model
+    def create(self, vals_list):
+        if vals_list.get('code') is False:
+            if vals_list.get('parent_id'):
+                # Code will be filled in with sequence of number
+                code = 1
+                while True:
+                    existing_code = self.env['product.category'].search(
+                        [('parent_id', '=', vals_list.get('parent_id')),
+                         ('code', '=', str(code).zfill(2))])
+                    if len(existing_code) == 0:
+                        break
+                    else:
+                        if code == 1:
+                            total = len(self.env['product.category'].search(
+                                [
+                                    (
+                                        'parent_id',
+                                        '=',
+                                        vals_list.get('parent_id')
+                                    )
+                                ]
+                            ))
+                            code = total + 1
+                        else:
+                            code += 1
+
+                # Set code to string and convert to '0(code)' with zfill.
+                code = str(code).zfill(2)
+                vals_list['code'] = code
+            else:
+                code = vals_list.get('name')[:2].upper()
+                vals_list['code'] = code
+        else:
+            vals_list['code'] = vals_list['code'].upper()
+
+        res = super().create(vals_list)
+        return res
+
+    def write(self, vals):
+        if vals.get('code') is False:
+            if vals.get('parent_id'):
+                # Code will be filled in with sequence of number
+                code = 1
+                while True:
+                    existing_code = self.env['product.category'].search(
+                        [('parent_id', '=', vals.get('parent_id')),
+                         ('code', '=', str(code).zfill(2))])
+                    if len(existing_code) == 0:
+                        break
+                    else:
+                        if code == 1:
+                            total = len(self.env['product.category'].search(
+                                [
+                                    (
+                                        'parent_id',
+                                        '=',
+                                        vals.get('parent_id')
+                                    )
+                                ]
+                            ))
+                            code = total + 1
+                        else:
+                            code += 1
+
+                # Set code to string and convert to '0(code)' with zfill.
+                code = str(code).zfill(2)
+                vals['code'] = code
+            else:
+                code = vals.get('name')[:2].upper()
+                vals['code'] = code
+        else:
+            vals['code'] = vals['code'].upper()
+
+        write_result = super().write(vals)
+        return write_result
