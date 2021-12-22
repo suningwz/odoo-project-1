@@ -288,33 +288,33 @@ class LeadSMSP(models.Model):
     _inherit = 'crm.lead'
 
     expected_tonnage = fields.Float(string='Expected Tonnage', default=0.0)
-    utm_source = fields.Selection([
-        ('google', 'Google'),
-        ('facebook', 'Facebook'),
-        ('instagram', 'Instagram'),
-        ('twitter', 'Twitter'),
-        ('pinterest', 'Pinterest'),
-        ('linkedin', 'LinkedIn'),
-        ('tokopedia', 'Tokopedia'),
-        ('newsletter', 'Newsletter'),
-        ('outbound', 'Outbound'),
-        ('referral', 'Referral'),
-        ('direct', 'Direct')],
-        string='UTM Source', index=True, readonly=False, store=True)
-    utm_medium = fields.Selection([
-        ('cpc', 'CPC'),
-        ('display', 'Display'),
-        ('search', 'Search'),
-        ('email', 'E-mail'),
-        ('social', 'Social'),
-        ('blog', 'Blog'),
-        ('canvasing', 'Canvasing'),
-        ('phone', 'Phone')],
-        string='UTM Medium', index=True, readonly=False, store=True)
-    utm_campaign = fields.Char(
-        'UTM Campaign', index=True, readonly=False, store=True)
-    utm_term = fields.Char(
-        'UTM Term', index=True, readonly=False, store=True)
+    # utm_source = fields.Selection([
+    #     ('google', 'Google'),
+    #     ('facebook', 'Facebook'),
+    #     ('instagram', 'Instagram'),
+    #     ('twitter', 'Twitter'),
+    #     ('pinterest', 'Pinterest'),
+    #     ('linkedin', 'LinkedIn'),
+    #     ('tokopedia', 'Tokopedia'),
+    #     ('newsletter', 'Newsletter'),
+    #     ('outbound', 'Outbound'),
+    #     ('referral', 'Referral'),
+    #     ('direct', 'Direct')],
+    #     string='UTM Source', index=True, readonly=False, store=True)
+    # utm_medium = fields.Selection([
+    #     ('cpc', 'CPC'),
+    #     ('display', 'Display'),
+    #     ('search', 'Search'),
+    #     ('email', 'E-mail'),
+    #     ('social', 'Social'),
+    #     ('blog', 'Blog'),
+    #     ('canvasing', 'Canvasing'),
+    #     ('phone', 'Phone')],
+    #     string='UTM Medium', index=True, readonly=False, store=True)
+    # utm_campaign = fields.Char(
+    #     'UTM Campaign', index=True, readonly=False, store=True)
+    # utm_term = fields.Char(
+    #     'UTM Term', index=True, readonly=False, store=True)
 
     @api.model
     def create(self, vals_list):
@@ -353,46 +353,46 @@ class LeadSMSP(models.Model):
                                'lifecycle_stage': 'lead'})
         return super().unlink()
 
-    def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
-        """ Extract data from lead to create a partner.
-
-        :param name : furtur name of the partner
-        :param is_company : True if the partner is a company
-        :param parent_id : id of the parent partner (False if no parent)
-
-        :return: dictionary of values to give at res_partner.create()
-        """
-        email_split = tools.email_split(self.email_from)
-        res = {
-            'name': partner_name,
-            'user_id': self.env.context.get('default_user_id') or self.user_id.id,
-            'comment': self.description,
-            'team_id': self.team_id.id,
-            'parent_id': parent_id,
-            'phone': self.phone,
-            'mobile': self.mobile,
-            'email': email_split[0] if email_split else False,
-            'title': self.title.id,
-            'function': self.function,
-            'street': self.street,
-            'street2': self.street2,
-            'zip': self.zip,
-            'city': self.city,
-            'country_id': self.country_id.id,
-            'state_id': self.state_id.id,
-            'website': self.website,
-            'utm_source': self.utm_source,
-            'utm_medium': self.utm_medium,
-            'utm_term': self.utm_term,
-            'utm_campaign': self.utm_campaign,
-            'is_company': is_company,
-            'type': 'contact'
-        }
-        if self.lang_id:
-            res['lang'] = self.lang_id.code
-
-        res = super()._prepare_customer_values(partner_name, is_company=is_company, parent_id=parent_id)
-        return res
+    # def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
+    #     """ Extract data from lead to create a partner.
+    #
+    #     :param name : furtur name of the partner
+    #     :param is_company : True if the partner is a company
+    #     :param parent_id : id of the parent partner (False if no parent)
+    #
+    #     :return: dictionary of values to give at res_partner.create()
+    #     """
+    #     email_split = tools.email_split(self.email_from)
+    #     res = {
+    #         'name': partner_name,
+    #         'user_id': self.env.context.get('default_user_id') or self.user_id.id,
+    #         'comment': self.description,
+    #         'team_id': self.team_id.id,
+    #         'parent_id': parent_id,
+    #         'phone': self.phone,
+    #         'mobile': self.mobile,
+    #         'email': email_split[0] if email_split else False,
+    #         'title': self.title.id,
+    #         'function': self.function,
+    #         'street': self.street,
+    #         'street2': self.street2,
+    #         'zip': self.zip,
+    #         'city': self.city,
+    #         'country_id': self.country_id.id,
+    #         'state_id': self.state_id.id,
+    #         'website': self.website,
+    #         'utm_source': self.utm_source,
+    #         'utm_medium': self.utm_medium,
+    #         'utm_term': self.utm_term,
+    #         'utm_campaign': self.utm_campaign,
+    #         'is_company': is_company,
+    #         'type': 'contact'
+    #     }
+    #     if self.lang_id:
+    #         res['lang'] = self.lang_id.code
+    #
+    #     res = super()._prepare_customer_values(partner_name, is_company=is_company, parent_id=parent_id)
+    #     return res
 
 
 class SaleOrderSMSP(models.Model):
