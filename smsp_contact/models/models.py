@@ -346,12 +346,12 @@ class LeadSMSP(models.Model):
 
         return write_result
 
-    def unlink(self):
-        old_partner = self.partner_id
-        if old_partner.opportunity_count <= 1 and old_partner.lifecycle_stage != 'customer':
-            old_partner.write({'become_prospect_date': None,
-                               'lifecycle_stage': 'lead'})
-        return super().unlink()
+    # def unlink(self):
+    #     old_partner = self.partner_id
+    #     if old_partner.opportunity_count <= 1 and old_partner.lifecycle_stage != 'customer':
+    #         old_partner.write({'become_prospect_date': None,
+    #                            'lifecycle_stage': 'lead'})
+    #     return super().unlink()
 
     def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
         """ Extract data from lead to create a partner.
