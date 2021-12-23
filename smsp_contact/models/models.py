@@ -574,118 +574,116 @@ class ProductVariantSMSP(models.Model):
     accurate_id = fields.Char(
         'Accurate ID', index=True, readonly=False, store=True)
 
-    @api.model
-    def create(self, vals_list):
-        if not vals_list.get('default_code'):
-            # VIDN / default code is contain:
-            # category prefix 6 digit + hash 4 digit
-            default_code = ''
-            cat_prefix = ''
-            list_cat_code = []
-            cat_id = vals_list.get('categ_id')
+    # @api.model
+    # def create(self, vals_list):
+    #     if not vals_list.get('default_code'):
+    #         # VIDN / default code is contain:
+    #         # category prefix 6 digit + hash 4 digit
+    #         default_code = ''
+    #         cat_prefix = ''
+    #         list_cat_code = []
+    #         cat_id = vals_list.get('categ_id')
 
-            # Generate category prefix based on its category.
-            while True:
-                category = self.env['product.category'].search_read(
-                    [('id', '=', cat_id)],
-                    ['id', 'code', 'parent_id']
-                )
-                if not category[0]['code']:
-                    raise Exception(
-                        'The category must be have a code. Category "{}" '
-                        'does not have a code'.format(category[0]['name'])
-                    )
-                if not category[0].get('parent_id'):
-                    list_cat_code.append(category[0]['code'])
-                    break
-                else:
-                    list_cat_code.append(category[0]['code'])
-                    cat_id = category[0]['parent_id'][0]
+    #         # Generate category prefix based on its category.
+    #         while True:
+    #             category = self.env['product.category'].search_read(
+    #                 [('id', '=', cat_id)],
+    #                 ['id', 'code', 'parent_id']
+    #             )
+    #             if not category[0]['code']:
+    #                 raise Exception(
+    #                     'The category must be have a code. Category "{}" '
+    #                     'does not have a code'.format(category[0]['name'])
+    #                 )
+    #             if not category[0].get('parent_id'):
+    #                 list_cat_code.append(category[0]['code'])
+    #                 break
+    #             else:
+    #                 list_cat_code.append(category[0]['code'])
+    #                 cat_id = category[0]['parent_id'][0]
 
-            # Reverse the list, so we get from root of the category.
-            desc_list = sorted(list_cat_code, reverse=True)
-            taken_code = 3
-            for i in range(0, taken_code):
-                if i > len(desc_list)-1:
-                    cat_prefix += '00'
-                else:
-                    cat_prefix += desc_list[i]
+    #         # Reverse the list, so we get from root of the category.
+    #         desc_list = sorted(list_cat_code, reverse=True)
+    #         taken_code = 3
+    #         for i in range(0, taken_code):
+    #             if i > len(desc_list)-1:
+    #                 cat_prefix += '00'
+    #             else:
+    #                 cat_prefix += desc_list[i]
 
-            # Generate 4 digit hash.
-            str_hash = str(uuid.uuid4())[:4]
-            default_code = cat_prefix + str_hash
+    #         # Generate 4 digit hash.
+    #         str_hash = str(uuid.uuid4())[:4]
+    #         default_code = cat_prefix + str_hash
 
-            # Check existing default code
-            while True:
-                existing_default_code = self.env['product.product'].search(
-                    [('default_code', '=', default_code)]
-                )
-                if not existing_default_code:
-                    break
-                else:
-                    str_hash = str(uuid.uuid4())[:4]
-                    default_code = cat_prefix + str_hash
+    #         # Check existing default code
+    #         while True:
+    #             existing_default_code = self.env['product.product'].search(
+    #                 [('default_code', '=', default_code)]
+    #             )
+    #             if not existing_default_code:
+    #                 break
+    #             else:
+    #                 str_hash = str(uuid.uuid4())[:4]
+    #                 default_code = cat_prefix + str_hash
 
-            vals_list['default_code'] = default_code.upper()
+    #         vals_list['default_code'] = default_code.upper()
 
-        res = super().create(vals_list)
-        return res
+    #     res = super().create(vals_list)
+    #     return res
 
-    def write(self, vals):
-        if not self.default_code:
-            # VIDN / default code is contain:
-            # category prefix 6 digit + hash 4 digit
-            default_code = ''
-            cat_prefix = ''
-            list_cat_code = []
-            cat_id = self.categ_id.id
+    # def write(self, vals):
+    #     if not self.default_code:
+    #         # VIDN / default code is contain:
+    #         # category prefix 6 digit + hash 4 digit
+    #         default_code = ''
+    #         cat_prefix = ''
+    #         list_cat_code = []
+    #         cat_id = self.categ_id.id
 
-            # Generate category prefix based on its category.
-            while True:
-                category = self.env['product.category'].search_read(
-                    [('id', '=', cat_id)],
-                    ['id', 'name', 'code', 'parent_id']
-                )
-                if not category[0]['code']:
-                    raise Exception(
-                        'The category must be have a code. Category "{}" '
-                        'does not have a code'.format(category[0]['name'])
-                    )
-                if not category[0].get('parent_id'):
-                    list_cat_code.append(category[0]['code'])
-                    break
-                else:
-                    list_cat_code.append(category[0]['code'])
-                    cat_id = category[0]['parent_id'][0]
+    #         # Generate category prefix based on its category.
+    #         while True:
+    #             category = self.env['product.category'].search_read(
+    #                 [('id', '=', cat_id)],
+    #                 ['id', 'name', 'code', 'parent_id']
+    #             )
+    #             if not category[0]['code']:
+    #                 raise Exception(
+    #                     'The category must be have a code. Category "{}" '
+    #                     'does not have a code'.format(category[0]['name'])
+    #                 )
+    #             if not category[0].get('parent_id'):
+    #                 list_cat_code.append(category[0]['code'])
+    #                 break
+    #             else:
+    #                 list_cat_code.append(category[0]['code'])
+    #                 cat_id = category[0]['parent_id'][0]
 
-            # Reverse the list, so we get from root of the category.
-            desc_list = sorted(list_cat_code, reverse=True)
-            taken_code = 3
-            for i in range(0, taken_code):
-                if i > len(desc_list)-1:
-                    cat_prefix += '00'
-                else:
-                    cat_prefix += desc_list[i]
+    #         # Reverse the list, so we get from root of the category.
+    #         desc_list = sorted(list_cat_code, reverse=True)
+    #         taken_code = 3
+    #         for i in range(0, taken_code):
+    #             if i > len(desc_list)-1:
+    #                 cat_prefix += '00'
+    #             else:
+    #                 cat_prefix += desc_list[i]
 
-            # Generate 4 digit hash.
-            str_hash = str(uuid.uuid4())[:4]
-            default_code = cat_prefix + str_hash
+    #         # Generate 4 digit hash.
+    #         str_hash = str(uuid.uuid4())[:4]
+    #         default_code = cat_prefix + str_hash
 
-            # Check existing default code
-            while True:
-                existing_default_code = self.env['product.product'].search(
-                    [('default_code', '=', default_code)]
-                )
-                if not existing_default_code:
-                    break
-                else:
-                    str_hash = str(uuid.uuid4())[:4]
-                    default_code = cat_prefix + str_hash
+    #         # Check existing default code
+    #         while True:
+    #             existing_default_code = self.env['product.product'].search(
+    #                 [('default_code', '=', default_code)]
+    #             )
+    #             if not existing_default_code:
+    #                 break
+    #             else:
+    #                 str_hash = str(uuid.uuid4())[:4]
+    #                 default_code = cat_prefix + str_hash
 
-            vals['default_code'] = default_code.upper()
+    #         vals['default_code'] = default_code.upper()
 
-        write_result = super().write(vals)
-        return write_result
 
 class ManufactureSMSP(models.Model):
     _inherit = 'mrp.production'
@@ -709,78 +707,78 @@ class ProductCategorySMSP(models.Model):
     code = fields.Char(
         'Code', index=True, readonly=False, store=True)
 
-    @api.model
-    def create(self, vals_list):
-        if vals_list.get('code') is False:
-            if vals_list.get('parent_id'):
-                # Code will be filled in with sequence of number
-                code = 1
-                while True:
-                    existing_code = self.env['product.category'].search(
-                        [('parent_id', '=', vals_list.get('parent_id')),
-                         ('code', '=', str(code).zfill(2))])
-                    if len(existing_code) == 0:
-                        break
-                    else:
-                        if code == 1:
-                            total = len(self.env['product.category'].search(
-                                [
-                                    (
-                                        'parent_id',
-                                        '=',
-                                        vals_list.get('parent_id')
-                                    )
-                                ]
-                            ))
-                            code = total + 1
-                        else:
-                            code += 1
+    # @api.model
+    # def create(self, vals_list):
+    #     if vals_list.get('code') is False:
+    #         if vals_list.get('parent_id'):
+    #             # Code will be filled in with sequence of number
+    #             code = 1
+    #             while True:
+    #                 existing_code = self.env['product.category'].search(
+    #                     [('parent_id', '=', vals_list.get('parent_id')),
+    #                      ('code', '=', str(code).zfill(2))])
+    #                 if len(existing_code) == 0:
+    #                     break
+    #                 else:
+    #                     if code == 1:
+    #                         total = len(self.env['product.category'].search(
+    #                             [
+    #                                 (
+    #                                     'parent_id',
+    #                                     '=',
+    #                                     vals_list.get('parent_id')
+    #                                 )
+    #                             ]
+    #                         ))
+    #                         code = total + 1
+    #                     else:
+    #                         code += 1
 
-                # Set code to string and convert to '0(code)' with zfill.
-                code = str(code).zfill(2)
-                vals_list['code'] = code
-            else:
-                code = vals_list.get('name')[:2].upper()
-                vals_list['code'] = code
-        else:
-            vals_list['code'] = vals_list['code'].upper()
+    #             # Set code to string and convert to '0(code)' with zfill.
+    #             code = str(code).zfill(2)
+    #             vals_list['code'] = code
+    #         else:
+    #             code = vals_list.get('name')[:2].upper()
+    #             vals_list['code'] = code
+    #     else:
+    #         vals_list['code'] = vals_list['code'].upper()
 
-        res = super().create(vals_list)
-        return res
+    #     res = super().create(vals_list)
+    #     return res
 
-    def write(self, vals):
-        if self.code is False:
-            if self.parent_id:
-                # Code will be filled in with sequence of number
-                code = 1
-                while True:
-                    existing_code = self.env['product.category'].search(
-                        [('parent_id', '=', self.parent_id.id),
-                         ('code', '=', str(code).zfill(2))])
-                    if len(existing_code) == 0:
-                        break
-                    else:
-                        if code == 1:
-                            total = len(self.env['product.category'].search(
-                                [
-                                    (
-                                        'parent_id',
-                                        '=',
-                                        self.parent_id.id
-                                    )
-                                ]
-                            ))
-                            code = total + 1
-                        else:
-                            code += 1
+    # def write(self, vals):
+    #     if self.code is False:
+    #         if self.parent_id:
+    #             # Code will be filled in with sequence of number
+    #             code = 1
+    #             while True:
+    #                 existing_code = self.env['product.category'].search(
+    #                     [('parent_id', '=', self.parent_id.id),
+    #                      ('code', '=', str(code).zfill(2))])
+    #                 if len(existing_code) == 0:
+    #                     break
+    #                 else:
+    #                     if code == 1:
+    #                         total = len(self.env['product.category'].search(
+    #                             [
+    #                                 (
+    #                                     'parent_id',
+    #                                     '=',
+    #                                     self.parent_id.id
+    #                                 )
+    #                             ]
+    #                         ))
+    #                         code = total + 1
+    #                     else:
+    #                         code += 1
 
-                # Set code to string and convert to '0(code)' with zfill.
-                code = str(code).zfill(2)
-                vals['code'] = code
-            else:
-                code = self.name[:2].upper()
-                vals['code'] = code
-        else:
-            vals['code'] = self.code.upper()
-        write_result = super().write(vals)
-        return write_result
+    #             # Set code to string and convert to '0(code)' with zfill.
+    #             code = str(code).zfill(2)
+    #             vals['code'] = code
+    #         else:
+    #             code = self.name[:2].upper()
+    #             vals['code'] = code
+    #     else:
+    #         vals['code'] = self.code.upper()
+    #     write_result = super().write(vals)
+    #     return write_result
