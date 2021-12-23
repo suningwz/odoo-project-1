@@ -590,6 +590,11 @@ class ProductVariantSMSP(models.Model):
                     [('id', '=', cat_id)],
                     ['id', 'code', 'parent_id']
                 )
+                if not category[0]['code']:
+                    raise Exception(
+                        'The category must be have a code. Category "{}" '
+                        'does not have a code'.format(category[0]['name'])
+                    )
                 if not category[0].get('parent_id'):
                     list_cat_code.append(category[0]['code'])
                     break
