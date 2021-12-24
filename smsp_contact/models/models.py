@@ -399,6 +399,17 @@ class LeadSMSP(models.Model):
 class SaleOrderSMSP(models.Model):
     _inherit = 'sale.order'
 
+    total_weight = fields.Float(string='Total Weight', default=0.0)
+
+    @api.depends('order_line')
+    def _compute_total_weight(self):
+        for record in self:
+            all_lines = record.order_line
+            total = 0
+            for l in all_lines:
+                total =  total + (l.product_id.weight * l.product_qty)
+            record.total_weight = total
+
     def action_confirm(self):
         res = super().action_confirm()
         if self.partner_id.become_customer_date == False:

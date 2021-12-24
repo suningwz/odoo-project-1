@@ -29,6 +29,7 @@
         - Add validation for non-negative stock in manufacture order (prevent mark as done when it's happened).
         - Add posted_cost and posted_total_cost to record cost for each invoice line at that time when the invoice has been posted.
         - Add Accurate ID in product variant and product form.
+        - Add Total Weight in sale order.
     """,
 
     'author': "My Company",
@@ -54,6 +55,7 @@
         'views/override_purchase_order.xml',
         'views/override_manufacture.xml',
         'views/override_product.xml',
+        'views/override_sale_order.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
