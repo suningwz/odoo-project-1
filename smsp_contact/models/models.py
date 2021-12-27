@@ -537,6 +537,16 @@ class PurchaseOrderSMSP(models.Model):
     _inherit = 'purchase.order'
 
     is_complete_received = fields.Boolean(string='Complete Received?', compute='_compute_is_complete_received', help='It indicates all of the products in PO has been fully delivered or not.', readonly=True, store=False)
+    total_weight = fields.Float(string='Total Weight', default=0.0)
+
+    @api.depends('order_line')
+    def _compute_total_weight(self):
+        for record in self:
+            all_lines = record.order_line
+            total = 0
+            for l in all_lines:
+                total =  total + (l.product_id.weight * l.product_qty)
+            record.total_weight = total
 
     def _compute_is_complete_received(self):
         for record in self:
@@ -561,6 +571,17 @@ class AccountMoveLineSMSP(models.Model):
 
 class AccountMoveSMSP(models.Model):
     _inherit = 'account.move'
+
+    total_weight = fields.Float(string='Total Weight', default=0.0)
+
+    @api.depends('invoice_line_ids')
+    def _compute_total_weight(self):
+        for record in self:
+            all_lines = record.invoice_line_ids
+            total = 0
+            for l in all_lines:
+                total =  total + (l.product_id.weight * l.quantity)
+            record.total_weight = total
 
     def action_post(self):
         for record in self:

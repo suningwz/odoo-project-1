@@ -8,6 +8,10 @@
         <xpath expr="//field[@name='fiscal_position_id']" position="after">
           <field name="is_complete_received" string="Complete Received?"/>
         </xpath>
+
+        <xpath expr="//field[@name='origin']" position="after">
+          <field name="total_weight" string="Total Weight" readonly="1"/>
+        </xpath>
       </field>
     </record>
 

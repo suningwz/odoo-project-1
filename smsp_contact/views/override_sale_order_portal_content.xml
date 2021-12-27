@@ -1,0 +1,18 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="override_sale_order_portal_content">
+      <field name="name">override.sale.order.portal.content</field>
+      <field name="inherit_id" ref="sale.sale_order_portal_content" />
+      <field name="arch" type="xml">
+        <xpath expr="//td[@class='text-right']" position="before">
+          <t t-if="line.product_template_id.description_sale">
+            <td id="product_name"><span t-field="line.product_template_id.description_sale"/></td>
+          </t>
+          <t t-if="not line.product_template_id.description_sale">
+            <td id="product_name"><span t-field="line.product_template_id.name"/></td>
+          </t>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
