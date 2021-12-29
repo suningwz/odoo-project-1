@@ -1,0 +1,13 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="override_report_layout">
+      <field name="name">override.report.layout</field>
+      <field name="inherit_id" ref="web.report_layout" />
+      <field name="arch" type="xml">
+        <xpath expr="//head" position="inside">
+          <link rel="stylesheet" href="/smsp_contact/static/src/css/smsp.css"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

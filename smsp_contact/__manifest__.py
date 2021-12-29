@@ -33,6 +33,7 @@
         - Add Total Weight in purchase order.
         - Add Total Weight in account move (INV/BILL).
         - Override Sale Order Portal Content with our layout.
+        - Add our own css for odoo print report.
     """,
 
     'author': "My Company",
@@ -61,6 +62,7 @@
         'views/override_sale_order.xml',
         'views/override_sale_order_portal_content.xml',
         'views/override_invoice_bill.xml',
+        'views/override_web_report_layout.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
