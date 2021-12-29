@@ -27,6 +27,13 @@
         - Make button validate invisible when there is a stock minus, over credit limit, and overdue invoice.
         - Add boolean variable in PO to check if all products in that PO is fully received or not
         - Add validation for non-negative stock in manufacture order (prevent mark as done when it's happened).
+        - Add posted_cost and posted_total_cost to record cost for each invoice line at that time when the invoice has been posted.
+        - Add Accurate ID in product variant and product form.
+        - Add Total Weight in sale order.
+        - Add Total Weight in purchase order.
+        - Add Total Weight in account move (INV/BILL).
+        - Override Sale Order Portal Content with our layout.
+        - Add our own css for odoo print report.
     """,
 
     'author': "My Company",
@@ -51,6 +58,11 @@
         'views/override_stock_picking.xml',
         'views/override_purchase_order.xml',
         'views/override_manufacture.xml',
+        'views/override_product.xml',
+        'views/override_sale_order.xml',
+        'views/override_sale_order_portal_content.xml',
+        'views/override_invoice_bill.xml',
+        'views/override_web_report_layout.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

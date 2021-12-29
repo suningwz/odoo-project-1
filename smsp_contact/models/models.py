@@ -8,6 +8,7 @@ import datetime
 import phonenumbers
 import re
 import requests
+import uuid
 
 
 class IndustrySMSP(models.Model):
@@ -92,137 +93,141 @@ class ContactSMSP(models.Model):
     # teddy = fields.Char(
     #     'TEDDY', index=True, readonly=False, store=True)
 
+    # _sql_constraints = [
+    #     ('email_phone_uniq', 'unique (email,phone)', 'The email and phone must be unique for each customer !'),
+    # ]
+
     _sql_constraints = [
-        ('email_phone_uniq', 'unique (email,phone)', 'The email and phone must be unique for each customer !'),
+        ('email_phone_uniq', 'Check(1=1)', 'The email and phone must be unique for each customer !'),
     ]
 
-    @api.model
-    def create(self, vals_list):
-        """Phone Validation."""
-        phone = vals_list.get('phone')
-        if phone:
-            try:
-                if not self.check_phonenumber(phone):
-                    raise ValidationError('Not a valid Phone')
-            except Exception as e:
-                raise ValidationError(str(e))
-
-        """Email Validation."""
-        email = vals_list.get('email')
-        if email:
-            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
-            if match is None:
-                raise ValidationError('Not a valid E-mail')
-
-        """Duplicate Email and Phone Validation."""
-        if phone is None:
-            phone = False
-        if email is None:
-            email = False
-        dup = self.env['res.partner'].search(
-            [('phone', '=', phone),
-             ('email', '=', email),
-             ('is_company', '=', False)])
-        if len(dup) > 0 and not vals_list.get('is_company'):
-            raise ValidationError("Email and phone must be unique!")
-        else:
-            partner = super().create(vals_list)
-            data = self.env['res.partner'].search_read(
-                [('id', '=', partner.id)],
-                [
-                    'id', 'name', 'email', 'phone', 'lifecycle_stage',
-                    'become_visitor_date', 'become_lead_date',
-                    'become_prospect_date', 'become_customer_date',
-                    'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
-                ]
-            )
-            result = data[0]
-            result['method'] = 'create'
-            if result.get('become_visitor_date'):
-                result['become_visitor_date'] = str(result['become_visitor_date'])
-            if result.get('become_lead_date'):
-                result['become_lead_date'] = str(result['become_lead_date'])
-            if result.get('become_prospect_date'):
-                result['become_prospect_date'] = str(result['become_prospect_date'])
-            if result.get('become_customer_date'):
-                result['become_customer_date'] = str(result['become_customer_date'])
-
-            # Send to contact connector service API
-            try:
-                url = CONTACT_CONNECTOR_API
-                requests.post(url, json=result[0])
-            except Exception:
-                pass
-
-            return partner
-
-    def write(self, vals):
-        """Phone Validation."""
-        phone = vals.get('phone')
-        if phone:
-            try:
-                if not self.check_phonenumber(phone):
-                    raise ValidationError('Not a valid Phone')
-            except Exception as e:
-                raise ValidationError(str(e))
-
-        """Email Validation."""
-        email = vals.get('email')
-        if email:
-            match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
-            if match is None:
-                raise ValidationError('Not a valid E-mail')
-
-        """Duplicate Email and Phone Validation."""
-        is_email_phone_change = True
-        if phone is None:
-            phone = False
-        if email is None:
-            email = False
-        if not (vals.get('phone') or vals.get('email')):
-            is_email_phone_change = False
-        is_company = vals.get('is_company')
-        if not is_company:
-            is_company = self.is_company
-        dup = self.env['res.partner'].search(
-            [('phone', '=', phone),
-             ('email', '=', email),
-             ('is_company', '=', False)])
-        if len(dup) > 0 and not is_company and is_email_phone_change:
-            raise ValidationError("Email and phone must be unique!")
-        else:
-            partner = super().write(vals)
-            data = self.env['res.partner'].search_read(
-                [('id', '=', self.id)],
-                [
-                    'id', 'name', 'email', 'phone', 'lifecycle_stage',
-                    'become_visitor_date', 'become_lead_date',
-                    'become_prospect_date', 'become_customer_date',
-                    'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
-                ]
-            )
-            if len(data) > 0:
-                result = data[0]
-                result['method'] = 'update'
-
-                if result.get('become_visitor_date'):
-                    result['become_visitor_date'] = str(result['become_visitor_date'])
-                if result.get('become_lead_date'):
-                    result['become_lead_date'] = str(result['become_lead_date'])
-                if result.get('become_prospect_date'):
-                    result['become_prospect_date'] = str(result['become_prospect_date'])
-                if result.get('become_customer_date'):
-                    result['become_customer_date'] = str(result['become_customer_date'])
-
-                print(result)
-                # Send to contact connector service API
-                try:
-                    url = CONTACT_CONNECTOR_API
-                    resp = requests.post(url, json=result)
-                    print(resp)
-                except Exception as e:
-                    print(e)
-            return partner
+    # @api.model
+    # def create(self, vals_list):
+    #     """Phone Validation."""
+    #     phone = vals_list.get('phone')
+    #     if phone:
+    #         try:
+    #             if not self.check_phonenumber(phone):
+    #                 raise ValidationError('Not a valid Phone')
+    #         except Exception as e:
+    #             raise ValidationError(str(e))
+    #
+    #     """Email Validation."""
+    #     email = vals_list.get('email')
+    #     if email:
+    #         match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
+    #         if match is None:
+    #             raise ValidationError('Not a valid E-mail')
+    #
+    #     """Duplicate Email and Phone Validation."""
+    #     if phone is None:
+    #         phone = False
+    #     if email is None:
+    #         email = False
+    #     dup = self.env['res.partner'].search(
+    #         [('phone', '=', phone),
+    #          ('email', '=', email),
+    #          ('is_company', '=', False)])
+    #     if len(dup) > 0 and not vals_list.get('is_company'):
+    #         raise ValidationError("Email and phone must be unique!")
+    #     else:
+    #         partner = super().create(vals_list)
+    #         data = self.env['res.partner'].search_read(
+    #             [('id', '=', partner.id)],
+    #             [
+    #                 'id', 'name', 'email', 'phone', 'lifecycle_stage',
+    #                 'become_visitor_date', 'become_lead_date',
+    #                 'become_prospect_date', 'become_customer_date',
+    #                 'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
+    #             ]
+    #         )
+    #         result = data[0]
+    #         result['method'] = 'create'
+    #         if result.get('become_visitor_date'):
+    #             result['become_visitor_date'] = str(result['become_visitor_date'])
+    #         if result.get('become_lead_date'):
+    #             result['become_lead_date'] = str(result['become_lead_date'])
+    #         if result.get('become_prospect_date'):
+    #             result['become_prospect_date'] = str(result['become_prospect_date'])
+    #         if result.get('become_customer_date'):
+    #             result['become_customer_date'] = str(result['become_customer_date'])
+    #
+    #         # Send to contact connector service API
+    #         try:
+    #             url = CONTACT_CONNECTOR_API
+    #             requests.post(url, json=result[0])
+    #         except Exception:
+    #             pass
+    #
+    #         return partner
+    #
+    # def write(self, vals):
+    #     """Phone Validation."""
+    #     phone = vals.get('phone')
+    #     if phone:
+    #         try:
+    #             if not self.check_phonenumber(phone):
+    #                 raise ValidationError('Not a valid Phone')
+    #         except Exception as e:
+    #             raise ValidationError(str(e))
+    #
+    #     """Email Validation."""
+    #     email = vals.get('email')
+    #     if email:
+    #         match = re.match('^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$', email)
+    #         if match is None:
+    #             raise ValidationError('Not a valid E-mail')
+    #
+    #     """Duplicate Email and Phone Validation."""
+    #     is_email_phone_change = True
+    #     if phone is None:
+    #         phone = False
+    #     if email is None:
+    #         email = False
+    #     if not (vals.get('phone') or vals.get('email')):
+    #         is_email_phone_change = False
+    #     is_company = vals.get('is_company')
+    #     if not is_company:
+    #         is_company = self.is_company
+    #     dup = self.env['res.partner'].search(
+    #         [('phone', '=', phone),
+    #          ('email', '=', email),
+    #          ('is_company', '=', False)])
+    #     if len(dup) > 0 and not is_company and is_email_phone_change:
+    #         raise ValidationError("Email and phone must be unique!")
+    #     else:
+    #         partner = super().write(vals)
+    #         data = self.env['res.partner'].search_read(
+    #             [('id', '=', self.id)],
+    #             [
+    #                 'id', 'name', 'email', 'phone', 'lifecycle_stage',
+    #                 'become_visitor_date', 'become_lead_date',
+    #                 'become_prospect_date', 'become_customer_date',
+    #                 'utm_source', 'utm_term', 'utm_medium', 'utm_campaign'
+    #             ]
+    #         )
+    #         if len(data) > 0:
+    #             result = data[0]
+    #             result['method'] = 'update'
+    #
+    #             if result.get('become_visitor_date'):
+    #                 result['become_visitor_date'] = str(result['become_visitor_date'])
+    #             if result.get('become_lead_date'):
+    #                 result['become_lead_date'] = str(result['become_lead_date'])
+    #             if result.get('become_prospect_date'):
+    #                 result['become_prospect_date'] = str(result['become_prospect_date'])
+    #             if result.get('become_customer_date'):
+    #                 result['become_customer_date'] = str(result['become_customer_date'])
+    #
+    #             print(result)
+    #             # Send to contact connector service API
+    #             try:
+    #                 url = CONTACT_CONNECTOR_API
+    #                 resp = requests.post(url, json=result)
+    #                 print(resp)
+    #             except Exception as e:
+    #                 print(e)
+    #         return partner
 
     def convert_phonenumber(self, phonenumber):
         if phonenumber[0] == '0':
@@ -342,13 +347,13 @@ class LeadSMSP(models.Model):
 
         return write_result
 
-    def unlink(self):
-        old_partner = self.partner_id
-        if old_partner.opportunity_count <= 1 and old_partner.lifecycle_stage != 'customer':
-            old_partner.write({'become_prospect_date': None,
-                               'lifecycle_stage': 'lead'})
-        return super().unlink()
-    
+    # def unlink(self):
+    #     old_partner = self.partner_id
+    #     if old_partner.opportunity_count <= 1 and old_partner.lifecycle_stage != 'customer':
+    #         old_partner.write({'become_prospect_date': None,
+    #                            'lifecycle_stage': 'lead'})
+    #     return super().unlink()
+
     def _prepare_customer_values(self, partner_name, is_company=False, parent_id=False):
         """ Extract data from lead to create a partner.
 
@@ -393,6 +398,17 @@ class LeadSMSP(models.Model):
 
 class SaleOrderSMSP(models.Model):
     _inherit = 'sale.order'
+
+    total_weight = fields.Float(string='Total Weight', compute='_compute_total_weight', default=0.0)
+
+    @api.depends('order_line')
+    def _compute_total_weight(self):
+        for record in self:
+            all_lines = record.order_line
+            total = 0
+            for l in all_lines:
+                total =  total + (l.product_id.weight * l.product_qty)
+            record.total_weight = total
 
     def action_confirm(self):
         res = super().action_confirm()
@@ -521,6 +537,16 @@ class PurchaseOrderSMSP(models.Model):
     _inherit = 'purchase.order'
 
     is_complete_received = fields.Boolean(string='Complete Received?', compute='_compute_is_complete_received', help='It indicates all of the products in PO has been fully delivered or not.', readonly=True, store=False)
+    total_weight = fields.Float(string='Total Weight', compute='_compute_total_weight', default=0.0)
+
+    @api.depends('order_line')
+    def _compute_total_weight(self):
+        for record in self:
+            all_lines = record.order_line
+            total = 0
+            for l in all_lines:
+                total =  total + (l.product_id.weight * l.product_qty)
+            record.total_weight = total
 
     def _compute_is_complete_received(self):
         for record in self:
@@ -534,6 +560,161 @@ class PurchaseOrderSMSP(models.Model):
 
             if received:
                 record.is_complete_received = True
+
+
+class AccountMoveLineSMSP(models.Model):
+    _inherit = 'account.move.line'
+
+    posted_cost = fields.Float(string='Posted Cost', digits='Product Price', default=0.0)
+    posted_total_cost = fields.Float(string='Posted Total Cost', digits='Product Price', default=0.0)
+
+
+class AccountMoveSMSP(models.Model):
+    _inherit = 'account.move'
+
+    total_weight = fields.Float(string='Total Weight', compute='_compute_total_weight', default=0.0)
+
+    @api.depends('invoice_line_ids')
+    def _compute_total_weight(self):
+        for record in self:
+            all_lines = record.invoice_line_ids
+            total = 0
+            for l in all_lines:
+                total =  total + (l.product_id.weight * l.quantity)
+            record.total_weight = total
+
+    def action_post(self):
+        for record in self:
+            all_lines = record.invoice_line_ids
+            for l in all_lines:
+                l.posted_cost = l.product_id.standard_price
+                l.posted_total_cost = l.posted_cost * l.quantity
+        res = super().action_post()
+        return res
+
+
+class ProductSMSP(models.Model):
+    _inherit = 'product.template'
+
+    accurate_id = fields.Char(
+        'Accurate ID', index=True, readonly=False, store=True)
+
+
+class ProductVariantSMSP(models.Model):
+    _inherit = 'product.product'
+
+    accurate_id = fields.Char(
+        'Accurate ID', index=True, readonly=False, store=True)
+
+    # @api.model
+    # def create(self, vals_list):
+    #     if not vals_list.get('default_code'):
+    #         # VIDN / default code is contain:
+    #         # category prefix 6 digit + hash 4 digit
+    #         default_code = ''
+    #         cat_prefix = ''
+    #         list_cat_code = []
+    #         cat_id = vals_list.get('categ_id')
+
+    #         # Generate category prefix based on its category.
+    #         while True:
+    #             category = self.env['product.category'].search_read(
+    #                 [('id', '=', cat_id)],
+    #                 ['id', 'code', 'parent_id']
+    #             )
+    #             if not category[0]['code']:
+    #                 raise Exception(
+    #                     'The category must be have a code. Category "{}" '
+    #                     'does not have a code'.format(category[0]['name'])
+    #                 )
+    #             if not category[0].get('parent_id'):
+    #                 list_cat_code.append(category[0]['code'])
+    #                 break
+    #             else:
+    #                 list_cat_code.append(category[0]['code'])
+    #                 cat_id = category[0]['parent_id'][0]
+
+    #         # Reverse the list, so we get from root of the category.
+    #         desc_list = sorted(list_cat_code, reverse=True)
+    #         taken_code = 3
+    #         for i in range(0, taken_code):
+    #             if i > len(desc_list)-1:
+    #                 cat_prefix += '00'
+    #             else:
+    #                 cat_prefix += desc_list[i]
+
+    #         # Generate 4 digit hash.
+    #         str_hash = str(uuid.uuid4())[:4]
+    #         default_code = cat_prefix + str_hash
+
+    #         # Check existing default code
+    #         while True:
+    #             existing_default_code = self.env['product.product'].search(
+    #                 [('default_code', '=', default_code)]
+    #             )
+    #             if not existing_default_code:
+    #                 break
+    #             else:
+    #                 str_hash = str(uuid.uuid4())[:4]
+    #                 default_code = cat_prefix + str_hash
+
+    #         vals_list['default_code'] = default_code.upper()
+
+    #     res = super().create(vals_list)
+    #     return res
+
+    # def write(self, vals):
+    #     if not self.default_code:
+    #         # VIDN / default code is contain:
+    #         # category prefix 6 digit + hash 4 digit
+    #         default_code = ''
+    #         cat_prefix = ''
+    #         list_cat_code = []
+    #         cat_id = self.categ_id.id
+
+    #         # Generate category prefix based on its category.
+    #         while True:
+    #             category = self.env['product.category'].search_read(
+    #                 [('id', '=', cat_id)],
+    #                 ['id', 'name', 'code', 'parent_id']
+    #             )
+    #             if not category[0]['code']:
+    #                 raise Exception(
+    #                     'The category must be have a code. Category "{}" '
+    #                     'does not have a code'.format(category[0]['name'])
+    #                 )
+    #             if not category[0].get('parent_id'):
+    #                 list_cat_code.append(category[0]['code'])
+    #                 break
+    #             else:
+    #                 list_cat_code.append(category[0]['code'])
+    #                 cat_id = category[0]['parent_id'][0]
+
+    #         # Reverse the list, so we get from root of the category.
+    #         desc_list = sorted(list_cat_code, reverse=True)
+    #         taken_code = 3
+    #         for i in range(0, taken_code):
+    #             if i > len(desc_list)-1:
+    #                 cat_prefix += '00'
+    #             else:
+    #                 cat_prefix += desc_list[i]
+
+    #         # Generate 4 digit hash.
+    #         str_hash = str(uuid.uuid4())[:4]
+    #         default_code = cat_prefix + str_hash
+
+    #         # Check existing default code
+    #         while True:
+    #             existing_default_code = self.env['product.product'].search(
+    #                 [('default_code', '=', default_code)]
+    #             )
+    #             if not existing_default_code:
+    #                 break
+    #             else:
+    #                 str_hash = str(uuid.uuid4())[:4]
+    #                 default_code = cat_prefix + str_hash
+
+    #         vals['default_code'] = default_code.upper()
 
 
 class ManufactureSMSP(models.Model):
@@ -550,3 +731,86 @@ class ManufactureSMSP(models.Model):
                 if q.over_quantity:
                     record.over_quantity = q.over_quantity
                     break
+
+
+class ProductCategorySMSP(models.Model):
+    _inherit = 'product.category'
+
+    code = fields.Char(
+        'Code', index=True, readonly=False, store=True)
+
+    # @api.model
+    # def create(self, vals_list):
+    #     if vals_list.get('code') is False:
+    #         if vals_list.get('parent_id'):
+    #             # Code will be filled in with sequence of number
+    #             code = 1
+    #             while True:
+    #                 existing_code = self.env['product.category'].search(
+    #                     [('parent_id', '=', vals_list.get('parent_id')),
+    #                      ('code', '=', str(code).zfill(2))])
+    #                 if len(existing_code) == 0:
+    #                     break
+    #                 else:
+    #                     if code == 1:
+    #                         total = len(self.env['product.category'].search(
+    #                             [
+    #                                 (
+    #                                     'parent_id',
+    #                                     '=',
+    #                                     vals_list.get('parent_id')
+    #                                 )
+    #                             ]
+    #                         ))
+    #                         code = total + 1
+    #                     else:
+    #                         code += 1
+
+    #             # Set code to string and convert to '0(code)' with zfill.
+    #             code = str(code).zfill(2)
+    #             vals_list['code'] = code
+    #         else:
+    #             code = vals_list.get('name')[:2].upper()
+    #             vals_list['code'] = code
+    #     else:
+    #         vals_list['code'] = vals_list['code'].upper()
+
+    #     res = super().create(vals_list)
+    #     return res
+
+    # def write(self, vals):
+    #     if self.code is False:
+    #         if self.parent_id:
+    #             # Code will be filled in with sequence of number
+    #             code = 1
+    #             while True:
+    #                 existing_code = self.env['product.category'].search(
+    #                     [('parent_id', '=', self.parent_id.id),
+    #                      ('code', '=', str(code).zfill(2))])
+    #                 if len(existing_code) == 0:
+    #                     break
+    #                 else:
+    #                     if code == 1:
+    #                         total = len(self.env['product.category'].search(
+    #                             [
+    #                                 (
+    #                                     'parent_id',
+    #                                     '=',
+    #                                     self.parent_id.id
+    #                                 )
+    #                             ]
+    #                         ))
+    #                         code = total + 1
+    #                     else:
+    #                         code += 1
+
+    #             # Set code to string and convert to '0(code)' with zfill.
+    #             code = str(code).zfill(2)
+    #             vals['code'] = code
+    #         else:
+    #             code = self.name[:2].upper()
+    #             vals['code'] = code
+    #     else:
+    #         vals['code'] = self.code.upper()
+    #     write_result = super().write(vals)
+    #     return write_result
