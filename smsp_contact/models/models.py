@@ -598,6 +598,8 @@ class ProductSMSP(models.Model):
 
     accurate_id = fields.Char(
         'Accurate ID', index=True, readonly=False, store=True)
+    sku_number = fields.Char(
+        'SKU Number', index=True, readonly=False, store=True)
 
 
 class ProductVariantSMSP(models.Model):

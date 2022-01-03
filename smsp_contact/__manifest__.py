@@ -34,6 +34,8 @@
         - Add Total Weight in account move (INV/BILL).
         - Override Sale Order Portal Content with our layout.
         - Add our own css for odoo print report.
+        - Add Purchase Analysis and Invoice list in Purchase module.
+        - Add SKU number in product.template
     """,
 
     'author': "My Company",

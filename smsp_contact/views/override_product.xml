@@ -18,6 +18,7 @@
       <field name="arch" type="xml">
         <xpath expr="//field[@name='categ_id']" position="after">
           <field name="accurate_id" string="Accurate ID"/>
+          <field name="sku_number" string="SKU Number"/>
         </xpath>
       </field>
     </record>

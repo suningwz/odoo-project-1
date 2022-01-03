@@ -25,5 +25,20 @@
         </xpath>
       </field>
     </record>
+
+    <!-- Add Invoice in the Gross Margin Reporting -->
+    <menuitem
+    action="purchase_enterprise.purchase_report_action_dashboard"
+    id="purchase.report.purchase_analysis"
+    parent="purchase.purchase_report"
+    name="Purchase Analysis"
+    sequence="50"/>
+
+    <menuitem
+    action="account.action_move_out_invoice_type"
+    id="purchase.report.invoice_list"
+    parent="purchase.purchase_report"
+    name="Invoice List"
+    sequence="51"/>
   </data>
 </odoo>
