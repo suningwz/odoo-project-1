@@ -1,0 +1,17 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="override_hr_employee">
+      <field name="name">override.hr.employee</field>
+      <field name="model">hr.employee</field>
+      <field name="inherit_id" ref="hr.view_employee_form" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='bank_account_id']" position="after">
+          <field name="taxpayer_number" string="Taxpayer Identification Number"/>
+        </xpath>
+        <xpath expr="//field[@name='user_id']" position="after">
+          <field name="stratum" string="Stratum"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

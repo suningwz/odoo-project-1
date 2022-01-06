@@ -36,6 +36,7 @@
         - Add our own css for odoo print report.
         - Add Purchase Analysis and Invoice list in Purchase module.
         - Add SKU number in product.template
+        - Add Stratum and NPWP in employee
     """,
 
     'author': "My Company",
@@ -65,6 +66,7 @@
         'views/override_sale_order_portal_content.xml',
         'views/override_invoice_bill.xml',
         'views/override_web_report_layout.xml',
+        'views/override_employee.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
