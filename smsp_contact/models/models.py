@@ -772,6 +772,9 @@ class ProductVariantSMSP(models.Model):
 
             vals['default_code'] = default_code.upper()
 
+        res = super().write(vals)
+        return res
+
 
 class ManufactureSMSP(models.Model):
     _inherit = 'mrp.production'
