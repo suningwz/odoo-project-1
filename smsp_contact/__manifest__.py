@@ -66,7 +66,7 @@
         'views/override_sale_order_portal_content.xml',
         'views/override_invoice_bill.xml',
         'views/override_web_report_layout.xml',
-        # 'views/override_employee.xml',
+        'views/override_employee.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
