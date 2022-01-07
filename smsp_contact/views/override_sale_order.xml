@@ -8,6 +8,21 @@
         <xpath expr="//field[@name='payment_term_id']" position="after">
           <field name="total_weight" string="Total Weight" readonly="1"/>
         </xpath>
+
+        <xpath expr="//field[@name='picking_policy']" position="after">
+          <field name="is_complete_delivered" string="Complete Delivered?"/>
+        </xpath>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="override_sale_order_list">
+      <field name="name">override.sale.order.list</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='state'] " position="before">
+          <field name="is_complete_delivered" string="Complete Delivered?"/>
+        </xpath>
       </field>
     </record>
   </data>
