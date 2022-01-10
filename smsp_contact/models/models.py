@@ -399,6 +399,7 @@ class LeadSMSP(models.Model):
 class SaleOrderSMSP(models.Model):
     _inherit = 'sale.order'
 
+    is_complete_delivered = fields.Boolean(string='Complete Received?', compute='_compute_is_complete_delivered', help='It indicates all of the products in SO has been fully delivered or not.', readonly=True, store=False)
     total_weight = fields.Float(string='Total Weight', compute='_compute_total_weight', default=0.0)
 
     @api.depends('order_line')
@@ -407,7 +408,7 @@ class SaleOrderSMSP(models.Model):
             all_lines = record.order_line
             total = 0
             for l in all_lines:
-                total =  total + (l.product_id.weight * l.product_qty)
+                total =  total + (l.product_id.weight * l.product_uom_qty)
             record.total_weight = total
 
     def action_confirm(self):
@@ -445,6 +446,19 @@ class SaleOrderSMSP(models.Model):
 
         res = super().action_cancel()
         return res
+
+    def _compute_is_complete_delivered(self):
+        for record in self:
+            all_lines = record.order_line
+            delivered = True
+            for l in all_lines:
+                if l.product_uom_qty != l.qty_delivered:
+                    delivered = False
+                    record.is_complete_delivered = False
+                    break
+
+            if delivered:
+                record.is_complete_delivered = True
 
 
 class StockMoveLineSMSP(models.Model):
@@ -610,7 +624,8 @@ class ProductVariantSMSP(models.Model):
 
     @api.model
     def create(self, vals_list):
-        # Create automatically by product.template
+        # The vals_list value is different depending on the model is created.
+        # Create automatically from product.template
         if vals_list.get('product_tmpl_id'):
             product = self.env['product.template'].search_read(
                 [('id', '=', vals_list.get('product_tmpl_id'))]
@@ -664,6 +679,7 @@ class ProductVariantSMSP(models.Model):
 
             vals_list['default_code'] = default_code.upper()
 
+        # Update from product.product
         if not vals_list.get('default_code'):
             # VIDN / default code is contain:
             # category prefix 6 digit + hash 4 digit
