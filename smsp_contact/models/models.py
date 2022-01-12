@@ -614,6 +614,12 @@ class ProductSMSP(models.Model):
         'Accurate ID', index=True, readonly=False, store=True)
     sku_number = fields.Char(
         'SKU Number', index=True, readonly=False, store=True)
+    weight_theoretical = fields.Float(string='Weight Theoretical', default=0.0)
+    classification = fields.Selection([
+        ('S', 'S'),
+        ('A', 'A'),
+        ('B', 'B')], string='Classification',
+        default='S', store=True)
 
 
 class ProductVariantSMSP(models.Model):
@@ -621,6 +627,11 @@ class ProductVariantSMSP(models.Model):
 
     accurate_id = fields.Char(
         'Accurate ID', index=True, readonly=False, store=True)
+    weight_theoretical = fields.Float(related='product_tmpl_id.weight_theoretical', string='Weight Theoretical', store=True, default=0.0)
+    classification = fields.Selection(
+        related='product_tmpl_id.classification',
+        string='Classification', store=True
+    )
 
     @api.model
     def create(self, vals_list):

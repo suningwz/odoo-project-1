@@ -37,6 +37,7 @@
         - Add Purchase Analysis and Invoice list in Purchase module.
         - Add SKU number in product.template
         - Add Stratum and NPWP in employee
+        - Add weight theoretical and classification of product (S, A, B)
     """,
 
     'author': "My Company",
