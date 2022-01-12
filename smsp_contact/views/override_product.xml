@@ -8,6 +8,12 @@
         <xpath expr="//field[@name='categ_id']" position="after">
           <field name="accurate_id" string="Accurate ID"/>
         </xpath>
+        <xpath expr="//div[@name='weight']" position="after">
+          <field name="weight_theoretical" string="Weight Theoretical"/>
+        </xpath>
+        <xpath expr="//field[@name='type']" position="after">
+          <field name="classification" string="Classification"/>
+        </xpath>
       </field>
     </record>
 
@@ -19,6 +25,12 @@
         <xpath expr="//field[@name='categ_id']" position="after">
           <field name="accurate_id" string="Accurate ID"/>
           <field name="sku_number" string="SKU Number"/>
+        </xpath>
+        <xpath expr="//div[@name='weight']" position="after">
+          <field name="weight_theoretical" string="Weight Theoretical"/>
+        </xpath>
+        <xpath expr="//field[@name='type']" position="after">
+          <field name="classification" string="Classification"/>
         </xpath>
       </field>
     </record>
