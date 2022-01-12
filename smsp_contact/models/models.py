@@ -627,10 +627,10 @@ class ProductVariantSMSP(models.Model):
 
     accurate_id = fields.Char(
         'Accurate ID', index=True, readonly=False, store=True)
-    weight_theoretical = fields.Float(related='product_tmpl_id.weight_theoretical', string='Weight Theoretical', store=True, default=0.0)
+    weight_theoretical = fields.Float(related='product_tmpl_id.weight_theoretical', string='Weight Theoretical', store=True, readonly=False, default=0.0)
     classification = fields.Selection(
         related='product_tmpl_id.classification',
-        string='Classification', store=True
+        string='Classification', store=True, readonly=False
     )
 
     @api.model
