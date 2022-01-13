@@ -635,7 +635,7 @@ class ProductSMSP(models.Model):
     @api.depends('product_variant_id.classification')
     def _compute_classification(self):
         for record in self:
-            if record.classification != record.product_variant_id.classification and record.product_variant_count <= 1:
+            if record.classification != record.product_variant_id.classification and record.product_variant_count <= 1 and record.product_variant_id.classification is not None:
                 record.classification = record.product_variant_id.classification
 
 
@@ -675,6 +675,7 @@ class ProductVariantSMSP(models.Model):
             )[0]
             cat_id = product.get('categ_id')[0]  # get the id in index 0
             weight_t = product.get('weight_theoretical')
+            classi = product.get('classification')
             default_code = ''
             cat_prefix = ''
             list_cat_code = []
@@ -723,6 +724,7 @@ class ProductVariantSMSP(models.Model):
 
             vals_list['default_code'] = default_code.upper()
             vals_list['weight_theoretical'] = weight_t
+            vals_list['classification'] = classi
 
         # Update from product.product
         if not vals_list.get('default_code'):
