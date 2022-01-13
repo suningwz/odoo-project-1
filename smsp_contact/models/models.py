@@ -670,6 +670,7 @@ class ProductVariantSMSP(models.Model):
                 [('id', '=', vals_list.get('product_tmpl_id'))]
             )[0]
             cat_id = product.get('categ_id')[0]  # get the id in index 0
+            weight_t = product.get('weight_theoretical')
             default_code = ''
             cat_prefix = ''
             list_cat_code = []
@@ -717,6 +718,7 @@ class ProductVariantSMSP(models.Model):
                     default_code = cat_prefix + str_hash
 
             vals_list['default_code'] = default_code.upper()
+            vals_list['weight_theoretical'] = weight_t
 
         # Update from product.product
         if not vals_list.get('default_code'):
