@@ -28,6 +28,9 @@ class GroupContactSMSP(models.Model):
 class ContactSMSP(models.Model):
     _inherit = 'res.partner'
 
+    kelurahan = fields.Char('Kelurahan', index=False, readonly=False, store=True)
+    kecamatan = fields.Char('Kecamatan', index=False, readonly=False, store=True)
+
     business_entity = fields.Selection([
         ('Perorangan', 'Perorangan'),
         ('Toko', 'Toko'),
