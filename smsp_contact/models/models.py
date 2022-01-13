@@ -629,7 +629,7 @@ class ProductSMSP(models.Model):
     @api.depends('product_variant_id.weight_theoretical')
     def _compute_weight_theoretical(self):
         for record in self:
-            if record.weight_theoretical != record.product_variant_id.weight_theoretical and record.product_variant_count <= 1:
+            if record.weight_theoretical != record.product_variant_id.weight_theoretical and record.product_variant_count <= 1 and record.product_variant_id.weight_theoretical > 0:
                 record.weight_theoretical = record.product_variant_id.weight_theoretical
 
     @api.depends('product_variant_id.weight_theoretical')
