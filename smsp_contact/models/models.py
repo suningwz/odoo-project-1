@@ -617,12 +617,20 @@ class ProductSMSP(models.Model):
         'Accurate ID', index=True, readonly=False, store=True)
     sku_number = fields.Char(
         'SKU Number', index=True, readonly=False, store=True)
-    weight_theoretical = fields.Float(string='Weight Theoretical', default=0.0)
+    weight_theoretical = fields.Float(compute='_compute_weight_theoretical', string='Weight Theoretical', default=0.0)
     classification = fields.Selection([
         ('S', 'S'),
         ('A', 'A'),
-        ('B', 'B')], string='Classification',
-        default='S', store=True)
+        ('B', 'B')],
+        compute='_compute_classification',
+        string='Classification',
+        default=None, store=True)
+
+    @api.depends('product_variant_id.weight_theoretical')
+    def _compute_weight_theoretical(self):
+        for record in self:
+            if record.weight_theoretical != record.product_variant_id.weight_theoretical and record.product_variant_count <= 1:
+                record.weight_theoretical = record.product_variant_id.weight_theoretical
 
 
 class ProductVariantSMSP(models.Model):
@@ -630,11 +638,20 @@ class ProductVariantSMSP(models.Model):
 
     accurate_id = fields.Char(
         'Accurate ID', index=True, readonly=False, store=True)
-    weight_theoretical = fields.Float(related='product_tmpl_id.weight_theoretical', string='Weight Theoretical', store=True, readonly=False, default=0.0)
-    classification = fields.Selection(
-        related='product_tmpl_id.classification',
-        string='Classification', store=True, readonly=False
-    )
+    weight_theoretical = fields.Float(compute='_compute_weight_theoretical', string='Weight Theoretical', store=True, readonly=False, default=0.0)
+    classification = fields.Selection([
+        ('S', 'S'),
+        ('A', 'A'),
+        ('B', 'B')],
+        compute='_compute_classification',
+        string='Classification',
+        default=None, store=True)
+
+    @api.depends('product_tmpl_id.weight_theoretical')
+    def _compute_weight_theoretical(self):
+        for record in self:
+            if record.weight_theoretical != record.product_tmpl_id.weight_theoretical and record.product_tmpl_id.product_variant_count <= 1:
+                record.weight_theoretical = record.product_tmpl_id.weight_theoretical
 
     @api.model
     def create(self, vals_list):
