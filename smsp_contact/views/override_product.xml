@@ -27,10 +27,10 @@
           <field name="sku_number" string="SKU Number"/>
         </xpath>
         <xpath expr="//div[@name='weight']" position="after">
-          <field name="weight_theoretical" string="Weight Theoretical"/>
+          <field name="weight_theoretical" string="Weight Theoretical" attrs="{'invisible':[('product_variant_count', '&gt;', 1), ('is_product_variant', '=', False)]}" modifiers="{'invisible':[['product_variant_count','&gt;',1],['is_product_variant','=',false]]}"/>
         </xpath>
         <xpath expr="//field[@name='type']" position="after">
-          <field name="classification" string="Classification"/>
+          <field name="classification" string="Classification" attrs="{'invisible':[('product_variant_count', '&gt;', 1), ('is_product_variant', '=', False)]}" modifiers="{'invisible':[['product_variant_count','&gt;',1],['is_product_variant','=',false]]}"/>
         </xpath>
       </field>
     </record>

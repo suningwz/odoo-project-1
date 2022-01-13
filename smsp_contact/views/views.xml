@@ -43,6 +43,11 @@
           <field name="customer_rank" invisible="1"/>
           <field name="supplier_rank" invisible="1"/>
         </xpath>
+
+        <xpath expr="//div[@class='o_address_format']/field[@name='city']" position="before">
+          <field name="kelurahan" placeholder="Kelurahan..." class="o_address_street"/>
+          <field name="kecamatan" placeholder="Kecamatan..." class="o_address_street"/>
+        </xpath>
       </field>
     </record>
 

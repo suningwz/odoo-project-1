@@ -28,6 +28,9 @@ class GroupContactSMSP(models.Model):
 class ContactSMSP(models.Model):
     _inherit = 'res.partner'
 
+    kelurahan = fields.Char('Kelurahan', index=False, readonly=False, store=True)
+    kecamatan = fields.Char('Kecamatan', index=False, readonly=False, store=True)
+
     business_entity = fields.Selection([
         ('Perorangan', 'Perorangan'),
         ('Toko', 'Toko'),
@@ -614,12 +617,26 @@ class ProductSMSP(models.Model):
         'Accurate ID', index=True, readonly=False, store=True)
     sku_number = fields.Char(
         'SKU Number', index=True, readonly=False, store=True)
-    weight_theoretical = fields.Float(string='Weight Theoretical', default=0.0)
+    weight_theoretical = fields.Float(compute='_compute_weight_theoretical', string='Weight Theoretical', store=True, readonly=False, default=0.0)
     classification = fields.Selection([
         ('S', 'S'),
         ('A', 'A'),
-        ('B', 'B')], string='Classification',
-        default='S', store=True)
+        ('B', 'B')],
+        compute='_compute_classification',
+        string='Classification',
+        default=None, store=True, readonly=False)
+
+    @api.depends('product_variant_id.weight_theoretical')
+    def _compute_weight_theoretical(self):
+        for record in self:
+            if record.weight_theoretical != record.product_variant_id.weight_theoretical and record.product_variant_count <= 1 and record.product_variant_id.weight_theoretical > 0:
+                record.weight_theoretical = record.product_variant_id.weight_theoretical
+
+    @api.depends('product_variant_id.classification')
+    def _compute_classification(self):
+        for record in self:
+            if record.classification != record.product_variant_id.classification and record.product_variant_count <= 1 and record.product_variant_id.classification is not None:
+                record.classification = record.product_variant_id.classification
 
 
 class ProductVariantSMSP(models.Model):
@@ -627,11 +644,26 @@ class ProductVariantSMSP(models.Model):
 
     accurate_id = fields.Char(
         'Accurate ID', index=True, readonly=False, store=True)
-    weight_theoretical = fields.Float(related='product_tmpl_id.weight_theoretical', string='Weight Theoretical', store=True, readonly=False, default=0.0)
-    classification = fields.Selection(
-        related='product_tmpl_id.classification',
-        string='Classification', store=True, readonly=False
-    )
+    weight_theoretical = fields.Float(compute='_compute_weight_theoretical', string='Weight Theoretical', store=True, readonly=False, default=0.0)
+    classification = fields.Selection([
+        ('S', 'S'),
+        ('A', 'A'),
+        ('B', 'B')],
+        compute='_compute_classification',
+        string='Classification',
+        default=None, store=True, readonly=False)
+
+    @api.depends('product_tmpl_id.weight_theoretical')
+    def _compute_weight_theoretical(self):
+        for record in self:
+            if record.weight_theoretical != record.product_tmpl_id.weight_theoretical and record.product_tmpl_id.product_variant_count <= 1:
+                record.weight_theoretical = record.product_tmpl_id.weight_theoretical
+
+    @api.depends('product_tmpl_id.classification')
+    def _compute_classification(self):
+        for record in self:
+            if record.classification != record.product_tmpl_id.classification and record.product_tmpl_id.product_variant_count <= 1:
+                record.classification = record.product_tmpl_id.classification
 
     @api.model
     def create(self, vals_list):
@@ -642,6 +674,8 @@ class ProductVariantSMSP(models.Model):
                 [('id', '=', vals_list.get('product_tmpl_id'))]
             )[0]
             cat_id = product.get('categ_id')[0]  # get the id in index 0
+            weight_t = product.get('weight_theoretical')
+            classi = product.get('classification')
             default_code = ''
             cat_prefix = ''
             list_cat_code = []
@@ -689,6 +723,8 @@ class ProductVariantSMSP(models.Model):
                     default_code = cat_prefix + str_hash
 
             vals_list['default_code'] = default_code.upper()
+            vals_list['weight_theoretical'] = weight_t
+            vals_list['classification'] = classi
 
         # Update from product.product
         if not vals_list.get('default_code'):
