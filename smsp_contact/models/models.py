@@ -632,9 +632,11 @@ class ProductSMSP(models.Model):
             if record.weight_theoretical != record.product_variant_id.weight_theoretical and record.product_variant_count <= 1 and record.product_variant_id.weight_theoretical > 0:
                 record.weight_theoretical = record.product_variant_id.weight_theoretical
 
-    @api.depends('product_variant_id.weight_theoretical')
+    @api.depends('product_variant_id.classification')
     def _compute_classification(self):
-        pass
+        for record in self:
+            if record.classification != record.product_variant_id.classification and record.product_variant_count <= 1:
+                record.classification = record.product_variant_id.classification
 
 
 class ProductVariantSMSP(models.Model):
@@ -657,9 +659,11 @@ class ProductVariantSMSP(models.Model):
             if record.weight_theoretical != record.product_tmpl_id.weight_theoretical and record.product_tmpl_id.product_variant_count <= 1:
                 record.weight_theoretical = record.product_tmpl_id.weight_theoretical
 
-    @api.depends('product_tmpl_id.weight_theoretical')
+    @api.depends('product_tmpl_id.classification')
     def _compute_classification(self):
-        pass
+        for record in self:
+            if record.classification != record.product_tmpl_id.classification and record.product_tmpl_id.product_variant_count <= 1:
+                record.classification = record.product_tmpl_id.classification
 
     @api.model
     def create(self, vals_list):
