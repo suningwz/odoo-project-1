@@ -617,14 +617,14 @@ class ProductSMSP(models.Model):
         'Accurate ID', index=True, readonly=False, store=True)
     sku_number = fields.Char(
         'SKU Number', index=True, readonly=False, store=True)
-    weight_theoretical = fields.Float(compute='_compute_weight_theoretical', string='Weight Theoretical', default=0.0)
+    weight_theoretical = fields.Float(compute='_compute_weight_theoretical', string='Weight Theoretical', readonly=False, default=0.0)
     classification = fields.Selection([
         ('S', 'S'),
         ('A', 'A'),
         ('B', 'B')],
         compute='_compute_classification',
         string='Classification',
-        default=None, store=True)
+        default=None, store=True, readonly=False)
 
     @api.depends('product_variant_id.weight_theoretical')
     def _compute_weight_theoretical(self):
@@ -645,7 +645,7 @@ class ProductVariantSMSP(models.Model):
         ('B', 'B')],
         compute='_compute_classification',
         string='Classification',
-        default=None, store=True)
+        default=None, store=True, readonly=False)
 
     @api.depends('product_tmpl_id.weight_theoretical')
     def _compute_weight_theoretical(self):
