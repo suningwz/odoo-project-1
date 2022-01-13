@@ -5,6 +5,7 @@
       <field name="inherit_id" ref="web.report_layout" />
       <field name="arch" type="xml">
         <xpath expr="//head" position="inside">
+          <link rel="stylesheet" href="/smsp_contact/static/src/css/test.css"/>
           <link rel="stylesheet" href="/smsp_contact/static/src/css/smsp.css"/>
         </xpath>
       </field>
